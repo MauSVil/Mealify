@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Glassy",
+  title: "Mealify",
   description: "A restaurant dashboard",
 };
 
