@@ -1,11 +1,7 @@
 import { ReactNode } from "react";
 
 const PublicUserLayout = ({ children }: { children: ReactNode }) => {
-  return (
-    <section>
-      {children}
-    </section>
-  )
+  return children;
 };
 
 export default PublicUserLayout;
