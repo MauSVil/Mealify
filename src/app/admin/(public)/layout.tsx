@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 const PublicAdminLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <section>
+    <section className="h-screen w-screen">
       {children}
     </section>
   )
