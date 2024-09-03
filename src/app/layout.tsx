@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/toaster";
+import Providers from "./providers";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -17,20 +17,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body className={dmSans.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TooltipProvider>
-            <Toaster />
-            {children}
-          </TooltipProvider>
-        </ThemeProvider>
+        <Providers>
+          <ToastContainer
+            theme="dark"
+            position="bottom-right"
+            stacked={true}
+            limit={2}
+          />
+          {children}
+        </Providers>
       </body>
     </html>
   );
