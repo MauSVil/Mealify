@@ -22,7 +22,7 @@ export class UsersRepository {
   static async find(filter: UserRepositoryFilter = {}): Promise<User[]> {
     await init();
     const filters = await UserRepositoryFilterModel.parse(filter);
-    const orders = await db.collection('orders').find<User>({}).toArray();
+    const orders = await db.collection('users').find<User>(filters).toArray();
     return orders;
   }
 
