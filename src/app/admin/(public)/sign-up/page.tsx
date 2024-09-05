@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,42 +13,22 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
-import Link from "next/link"
-import { useMutation } from "react-query"
-import { toast } from "react-toastify"
-import { useRouter } from "next/navigation"
-
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
+import { AdminSignUp, AdminSignUpSchema } from "@/lib/types/Zod/AdminSignUp"
+import { useSignUp } from "./_hooks/useSignUp"
+import { Loader2 } from "lucide-react"
 
 const SignUpPage = () => {
-  const router = useRouter()
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<AdminSignUp>({
+    resolver: zodResolver(AdminSignUpSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   })
 
-  const mutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
-      toast.info("Iniciando sesión...")
-      return values;
-    },
-    onSuccess: () => {
-      toast.success("Sesión iniciada")
-      router.push("/admin/dashboard")
-    },
-    onError: () => {
-      toast.error("Error al iniciar sesión")
-    },
-  })
+  const mutation = useSignUp();
  
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: AdminSignUp) {
     mutation.mutate(values)
   }
 
@@ -88,13 +67,12 @@ const SignUpPage = () => {
                     </FormItem>
                   )}
                 />
-                <div className="mt-4 text-center text-sm">
-                  No tienes una cuenta?{" "}
-                  <Link href="/admin/sign-up" className="underline">
-                    Registrarte
-                  </Link>
-                </div>
-                <Button type="submit">Submit</Button>
+                <Button
+                  type="submit"
+                >
+                  {mutation.isLoading &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {mutation.isLoading ? "Registrando..." : "Registrarse"}
+                </Button>
               </form>
             </Form>
           </div>

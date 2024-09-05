@@ -18,6 +18,8 @@ import Link from "next/link"
 import { useMutation } from "react-query"
 import { toast } from "react-toastify"
 import { useRouter } from "next/navigation"
+import { useSignIn } from "./_hooks/useSignIn"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -35,19 +37,7 @@ const AdminSignIn = () => {
     },
   })
 
-  const mutation = useMutation({
-    mutationFn: async (values: z.infer<typeof formSchema>) => {
-      toast.info("Iniciando sesión...")
-      return values;
-    },
-    onSuccess: () => {
-      toast.success("Sesión iniciada")
-      router.push("/admin/dashboard")
-    },
-    onError: () => {
-      toast.error("Error al iniciar sesión")
-    },
-  })
+  const mutation = useSignIn();
  
   function onSubmit(values: z.infer<typeof formSchema>) {
     mutation.mutate(values)
@@ -94,7 +84,10 @@ const AdminSignIn = () => {
                     Registrarte
                   </Link>
                 </div>
-                <Button type="submit">Submit</Button>
+                <Button type="submit">
+                  {mutation.isLoading &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {mutation.isLoading ? "Iniciando sesion..." : "Iniciar sesion"}
+                </Button>
               </form>
             </Form>
           </div>

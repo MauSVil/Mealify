@@ -1,4 +1,4 @@
-import { register } from "@/lib/MongoDB/actions/auth";
+import { UsersRepository } from "@/lib/Repositories/User.repository";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,11 +8,14 @@ export const POST = async (req: NextRequest) => {
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
-    const token = await register({ email, password, role: 'consumer' });
-    cookies().set('token', token as string);
-    return NextResponse.json({ token });
+    await UsersRepository.insertOne({ email, password, role: 'user', createdAt: new Date(), updatedAt: new Date() });
+    // cookies().set('token', token as string);
+    return NextResponse.json({ token: 'asda' });
   } catch (e) {
     console.error('Error signing up', e);
-    return NextResponse.json({ error: 'Error signing up' }, { status: 400 });
+    if (e instanceof Error) {
+      return NextResponse.json({ error: e.message }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Error [SignupUser]' }, { status: 400 });
   }
 };
