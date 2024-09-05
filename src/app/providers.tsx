@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "sonner";
 
 const Providers = ({ children }: { children: ReactNode }) => {
   const queryClient = new QueryClient();
@@ -17,6 +18,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
         disableTransitionOnChange
       >
         <TooltipProvider>
+          <Toaster richColors />
           {children}
         </TooltipProvider>
       </ThemeProvider>

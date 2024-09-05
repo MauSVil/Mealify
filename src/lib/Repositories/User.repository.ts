@@ -25,4 +25,11 @@ export class UsersRepository {
     const orders = await db.collection('orders').find<User>({}).toArray();
     return orders;
   }
+
+  static async insertOne(user: User): Promise<string> {
+    await init();
+    const { _id, ...rest } = user;
+    await db.collection('users').insertOne({ ...rest });
+    return 'El usuario ha sido creado';
+  }
 }
