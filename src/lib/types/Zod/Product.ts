@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ProductSchema = z.object({
-  _id: z.string().optional(),
+  _id: z.string(),
   name: z.string(),
   description: z.string(),
   price: z.number(),
@@ -22,3 +22,13 @@ export const ProductRepositoryFilterModel = z.object({
 });
 
 export type ProductRepositoryFilter = z.infer<typeof ProductRepositoryFilterModel>;
+
+export const NewProductSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  price: z.number(),
+  available: z.boolean(),
+  image: z.string(),
+});
+
+export type NewProduct = z.infer<typeof NewProductSchema>;
