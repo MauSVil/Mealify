@@ -46,7 +46,7 @@ const AdminSignIn = () => {
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Iniciar sesion</h1>
             <p className="text-muted-foreground">
-              Ingresa tus credenciales para acceder a tu cuenta de <strong className="text-primary">administrador</strong>
+              Ingresa tus credenciales para acceder a tu cuenta de <strong className="text-primary">usuario</strong>
             </p>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -91,7 +91,7 @@ const AdminSignIn = () => {
       </div>
       <div className="hidden bg-muted lg:block relative">
         <Image
-          src="/auth/admin.jpg"
+          src="/auth/user1.jpg"
           alt="Image"
           fill
         />
