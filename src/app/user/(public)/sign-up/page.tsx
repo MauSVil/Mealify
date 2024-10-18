@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -14,27 +13,22 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
-import Link from "next/link"
-import { useSignIn } from "./_hooks/useSignIn"
+import { AdminSignUp, AdminSignUpSchema } from "@/lib/types/Zod/AdminSignUp"
+import { useSignUp } from "./_hooks/useSignUp"
 import { Loader2 } from "lucide-react"
 
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
-
-const AdminSignIn = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+const SignUpPage = () => {
+  const form = useForm<AdminSignUp>({
+    resolver: zodResolver(AdminSignUpSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   })
 
-  const mutation = useSignIn();
+  const mutation = useSignUp();
  
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: AdminSignUp) {
     mutation.mutate(values)
   }
 
@@ -43,9 +37,9 @@ const AdminSignIn = () => {
       <div className="flex h-full items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Iniciar sesion</h1>
+            <h1 className="text-3xl font-bold">Registrarse</h1>
             <p className="text-muted-foreground">
-              Ingresa tus credenciales para acceder a tu cuenta de <strong className="text-primary">administrador</strong>
+              Escribe tu correo y contraseña para registrarte como <strong className="text-primary">usuario</strong>
             </p>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -73,15 +67,11 @@ const AdminSignIn = () => {
                     </FormItem>
                   )}
                 />
-                <div className="mt-4 text-center text-sm">
-                  No tienes una cuenta?{" "}
-                  <Link href="/admin/sign-up" className="underline">
-                    Registrarte
-                  </Link>
-                </div>
-                <Button type="submit">
+                <Button
+                  type="submit"
+                >
                   {mutation.isLoading &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {mutation.isLoading ? "Iniciando sesion..." : "Iniciar sesion"}
+                  {mutation.isLoading ? "Registrando..." : "Registrarse"}
                 </Button>
               </form>
             </Form>
@@ -90,13 +80,14 @@ const AdminSignIn = () => {
       </div>
       <div className="hidden bg-muted lg:block relative">
         <Image
-          src="/auth/admin.jpg"
+          src="/auth/user1.jpg"
           alt="Image"
           fill
+          sizes="33vw 100vw 200vw"
         />
       </div>
     </div>
   )
 }
 
-export default AdminSignIn;
+export default SignUpPage;

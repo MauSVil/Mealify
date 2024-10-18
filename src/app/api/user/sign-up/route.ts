@@ -1,6 +1,6 @@
 import { UsersRepository } from "@/lib/Repositories/User.repository";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from 'bcrypt';
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -8,9 +8,15 @@ export const POST = async (req: NextRequest) => {
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
-    await UsersRepository.insertOne({ email, password, role: 'user', createdAt: new Date(), updatedAt: new Date() });
-    // cookies().set('token', token as string);
-    return NextResponse.json({ token: 'asda' });
+    const user = await UsersRepository.findOne({ email, role: 'user' });
+    if (user) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await UsersRepository.insertOne({ email, password: hashedPassword, role: 'user', createdAt: new Date(), updatedAt: new Date() });
+    return NextResponse.json({ message: 'Usuario registrado correctamente' });
   } catch (e) {
     console.error('Error signing up', e);
     if (e instanceof Error) {
