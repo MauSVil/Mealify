@@ -1,7 +1,7 @@
 import clientPromise from "@/mongodb";
 import _ from "lodash";
 import { Db } from "mongodb";
-import { Product, ProductRepositoryFilter, ProductRepositoryFilterModel } from "../types/Zod/Product";
+import { NewProductSchema, Product, ProductRepositoryFilter, ProductRepositoryFilterModel } from "../types/Zod/Product";
 
 let client;
 let db: Db;
@@ -26,10 +26,11 @@ export class ProductsRepository {
     return orders;
   }
 
-  static async insertOne(user: Product): Promise<string> {
+  static async insertOne(product: Product): Promise<string> {
     await init();
-    const { _id, ...rest } = user;
-    await db.collection('products').insertOne({ ...rest });
-    return 'El usuario ha sido creado';
+
+    const body = await NewProductSchema.parseAsync(product);
+    await db.collection('products').insertOne(body);
+    return 'El producto ha sido creado';
   }
 }

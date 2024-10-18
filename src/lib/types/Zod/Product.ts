@@ -1,16 +1,16 @@
 import { z } from "zod";
 
 export const ProductSchema = z.object({
-  _id: z.string(),
+  _id: z.string().optional(),
   name: z.string(),
   description: z.string(),
-  price: z.number(),
+  price: z.coerce.number().min(1),
   available: z.boolean(),
   image: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  deletedAt: z.coerce.date().optional(),
-  restaurantId: z.string(),
+  deletedAt: z.coerce.date().optional().nullable(),
+  restaurantId: z.string().optional(),
 });
 
 export type Product = z.infer<typeof ProductSchema>;
@@ -23,12 +23,6 @@ export const ProductRepositoryFilterModel = z.object({
 
 export type ProductRepositoryFilter = z.infer<typeof ProductRepositoryFilterModel>;
 
-export const NewProductSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  price: z.number(),
-  available: z.boolean(),
-  image: z.string(),
-});
+export const NewProductSchema = ProductSchema.omit({ _id: true });
 
 export type NewProduct = z.infer<typeof NewProductSchema>;

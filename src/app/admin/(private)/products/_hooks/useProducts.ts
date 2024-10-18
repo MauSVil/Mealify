@@ -3,11 +3,12 @@ import ky from "ky";
 import { Product } from "@/lib/types/Zod/Product";
 
 export const useProducts = () => {
-  return useQuery({
+  return useQuery<Product[]>({
     queryKey: ["products"],
     queryFn: async () => {
-      const resp = await ky.post('/api/products/search', { json: {} }).json() as Product[]
-      return resp
+      const resp = await ky.post('/api/admin/products/search', { json: {} }).json() as { data?: Product[], error?: string };
+      return resp.data || [];
     },
+    refetchOnWindowFocus: false,
   });
 };

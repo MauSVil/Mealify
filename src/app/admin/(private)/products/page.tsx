@@ -8,6 +8,9 @@ import { useProducts } from "./_hooks/useProducts";
 import { Product } from "@/lib/types/Zod/Product";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { XCircle } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 
 const ProductsPage = () => {
   const router = useRouter();
@@ -27,9 +30,9 @@ const ProductsPage = () => {
     () =>
       [
         {
-          id: 'Comprador',
+          id: 'Nombre',
           header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Comprador" />
+            <DataTableColumnHeader column={column} title="Nombre" />
           ),
           accessorKey: 'name',
           enableGlobalFilter: true,
@@ -39,11 +42,11 @@ const ProductsPage = () => {
           sortingFn: "textCaseSensitive",
         },
         {
-          id: 'Email',
+          id: 'Precio',
           header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Email" />
+            <DataTableColumnHeader column={column} title="Precio" />
           ),
-          accessorKey: 'email',
+          accessorFn: (row) => `$${row.price}`,
           enableGlobalFilter: true,
           enableSorting: true,
           filterFn: "auto",
@@ -51,11 +54,21 @@ const ProductsPage = () => {
           sortingFn: "textCaseSensitive",
         },
         {
-          id: 'Telefono',
+          id: 'Disponible',
           header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Telefono" />
+            <DataTableColumnHeader column={column} title="Disponible" />
           ),
-          accessorKey: 'phone',
+          accessorKey: 'available',
+          cell: ({ cell }) => {
+            return (
+              <Switch
+                checked={cell.getValue() as boolean}
+                onCheckedChange={(value) => {
+                  console.log(value);
+                }}
+              />
+            )
+          },
           enableGlobalFilter: true,
           enableSorting: true,
           filterFn: "auto",
@@ -70,7 +83,7 @@ const ProductsPage = () => {
     data,
     columns,
     getRowId(originalRow) {
-      return originalRow._id;
+      return originalRow._id || '';
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
