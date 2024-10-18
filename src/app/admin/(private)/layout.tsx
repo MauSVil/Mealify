@@ -60,6 +60,11 @@ const PrivateAdminLayout = (props: Props) => {
     }
   }, [clients])
 
+  const handleLogout = () => {
+    Cookies.remove('business');
+    Cookies.remove('token');
+    router.push('/admin/sign-in');
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -190,7 +195,7 @@ const PrivateAdminLayout = (props: Props) => {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>Cerrar sesión</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
