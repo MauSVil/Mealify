@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
       id: user._id,
       email: user.email,
       role: user.role
-    }, process.env.JWT_SECRET!, { expiresIn: '365d' });
+    }, process.env.USER_JWT_SECRET!, { expiresIn: '365d' });
 
     cookies().set('token', token);
 
