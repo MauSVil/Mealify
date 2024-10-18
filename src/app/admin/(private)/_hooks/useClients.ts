@@ -12,8 +12,10 @@ export const useClients = () => {
       } catch (e) {
         if (e instanceof Error) {
           toast.error(e.message)
+          return
         }
         toast.error('Error al buscar clientes')
+        return
       }
     },
     refetchOnWindowFocus: false,
