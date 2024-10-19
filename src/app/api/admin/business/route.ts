@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
     const myParsedBody = await JSON.parse(body as string);
     const heroImage = await formData.get('heroImage');
 
-    if (!(heroImage instanceof File)) {
+    if (!heroImage || typeof heroImage === 'string') {
       return NextResponse.json({ error: 'El archivo heroImage no es válido' }, { status: 400 });
     }
 
