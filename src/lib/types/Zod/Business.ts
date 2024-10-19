@@ -4,7 +4,7 @@ export const BusinessSchema = z.object({
   _id: z.string().optional(),
   name: z.string().min(3),
   owner: z.string().optional(),
-  address: z.string().min(3),
+  description: z.string().min(3),
   phone: z.string().min(3),
   heroImage: z.any(),
   latitude: z.number(),
