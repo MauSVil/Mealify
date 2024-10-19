@@ -12,7 +12,13 @@ export const useCreateBusiness = () => {
   const router = useRouter();
   return useMutation<{}, SerializedError, Business>({
     mutationFn: async (values) => {
-      const resp = await ky.post("/api/admin/business", { json: values }).json() as { data?: Business, error?: string };
+      const formData = new FormData();
+      const { heroImage, ...rest } = values;
+      formData.append('heroImage', heroImage);
+      formData.append('data', JSON.stringify(rest));
+
+      const resp = await ky.post("/api/admin/business", { body: formData }).json() as { data?: Business, error?: string };
+
       Cookies.set('business', resp.data?._id || '');
       return resp.data || {};
     },
