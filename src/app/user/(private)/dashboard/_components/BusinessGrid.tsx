@@ -25,7 +25,7 @@ const BusinessGrid = () => {
               {business.name}
             </div>
             <p className="text-xs text-muted-foreground">
-              {business.address}
+              {business.description}
             </p>
           </div>
         </div>
