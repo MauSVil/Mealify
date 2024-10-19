@@ -18,6 +18,7 @@ export const InputFormField = <T extends FieldValues>(props: NextUIInputFormFiel
     className,
     ...rest
   } = props;
+
   return (
     <FormField
       {...controllerProps}
@@ -26,15 +27,21 @@ export const InputFormField = <T extends FieldValues>(props: NextUIInputFormFiel
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Input
-              {...field}
-              placeholder={placeholder}
-              type={type}
               {...rest}
+              placeholder={placeholder}
+              onChange={(e) => {
+                if (type === 'file') {
+                  field.onChange(e.target.files?.[0]);
+                } else {
+                  field.onChange(e.target.value);
+                }
+              }}
+              type={type}
             />
           </FormControl>
           <FormMessage className="text-xs text-red-500" />
         </FormItem>
       )}
     />
-  )
+  );
 };

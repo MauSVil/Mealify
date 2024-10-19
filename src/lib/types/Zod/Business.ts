@@ -6,6 +6,7 @@ export const BusinessSchema = z.object({
   owner: z.string().optional(),
   address: z.string().min(3),
   phone: z.string().min(3),
+  heroImage: z.union([z.instanceof(File), z.string()]),
   latitude: z.number(),
   longitude: z.number(),
   createdAt: z.coerce.date(),

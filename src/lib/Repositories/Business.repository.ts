@@ -1,6 +1,6 @@
 import clientPromise from "@/mongodb";
 import _ from "lodash";
-import { Db } from "mongodb";
+import { Db, ObjectId } from "mongodb";
 import { Business, BusinessRepositoryFilter, BusinessRepositoryFilterModel } from "../types/Zod/Business";
 
 let client;
@@ -26,10 +26,22 @@ export class BusinessRepository {
     return businesses;
   }
 
-  static async insertOne(user: Business): Promise<string> {
+  static async insertOne(business: Business): Promise<string> {
     await init();
-    const { _id, ...rest } = user;
+    const { _id, ...rest } = business;
     const insertedId =(await db.collection('businesses').insertOne({ ...rest })).insertedId;
     return insertedId.toString();
+  }
+
+  static async updateOne(id: string, business: Partial<Business>): Promise<string> {
+    await init();
+    const { _id, ...rest } = business;
+
+    if (!id) {
+      throw new Error('Id not found');
+    }
+
+    await db.collection('businesses').updateOne({ _id: new ObjectId(id) }, { $set: { ...rest } });
+    return 'El business ha sido actualizado';
   }
 }
