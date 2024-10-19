@@ -12,7 +12,7 @@ import { useCreateBusiness } from "./_hooks/useCreateBusiness";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
-const defaultValues: Business = {
+const defaultValues: Omit<Business, "heroImage"> = {
   name: "",
   owner: "",
   address: "",
@@ -22,7 +22,6 @@ const defaultValues: Business = {
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
-  heroImage: null as unknown as File,
 };
 
 const OnboardPage = () => {
@@ -61,6 +60,7 @@ const OnboardPage = () => {
     await createBusiness.mutateAsync(values);
   });
 
+  console.log(form.formState.errors);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
