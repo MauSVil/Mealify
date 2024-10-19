@@ -15,7 +15,7 @@ import { Loader2 } from "lucide-react";
 const defaultValues: Omit<Business, "heroImage"> = {
   name: "",
   owner: "",
-  address: "",
+  description: "",
   phone: "",
   latitude: 0,
   longitude: 0,
@@ -60,7 +60,6 @@ const OnboardPage = () => {
     await createBusiness.mutateAsync(values);
   });
 
-  console.log(form.formState.errors);
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -87,7 +86,7 @@ const OnboardPage = () => {
               <InputFormField
                 controllerProps={{
                   control: form.control,
-                  name: "address",
+                  name: "description",
                 }}
                 label="Description"
                 type="text"
@@ -111,6 +110,7 @@ const OnboardPage = () => {
                 label="Image"
                 type="file"
                 required
+                accept="image/*"
               />
 
             </form>
