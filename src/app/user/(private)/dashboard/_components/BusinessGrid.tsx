@@ -14,7 +14,7 @@ const BusinessGrid = () => {
         <div key={business._id} className="flex flex-col gap-4">
           <div className="w-full relative min-h-[185px]">
             <Image
-              src="/placeholders/restaurant.jpg"
+              src="https://minio.mausvil.dev/businesses/restaurant-front-1.jpg"
               alt={business.name}
               fill
               style={{ objectFit: 'cover' }}
