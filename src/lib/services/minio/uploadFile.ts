@@ -1,5 +1,5 @@
 import { Client } from 'minio';
-
+import { Readable } from 'stream';
 
 const minioClient = new Client({
   endPoint: 'minio.mausvil.dev',
@@ -9,10 +9,29 @@ const minioClient = new Client({
   secretKey: process.env.MINIO_SECRET_KEY!,
 });
 
-export const uploadFile = async (bucketName: string, id: string, file: File): Promise<string> => {
-  const buffer = await file.arrayBuffer();
-  await minioClient.putObject(bucketName, `${id}.${file.type.split('/')[1]}`, Buffer.from(buffer), file.size);
-  const fileUrl = `https://minio.mausvil.dev/${bucketName}/${id}.${file.type.split('/')[1]}`;
+function toNodeReadable(stream: ReadableStream) {
+  const reader = stream.getReader();
+  return new Readable({
+    async read() {
+      const { done, value } = await reader.read();
+      if (done) {
+        this.push(null);
+      } else {
+        this.push(Buffer.from(value));
+      }
+    }
+  });
+}
+
+export const uploadFile = async (bucketName: string, id: string, file: Blob): Promise<string> => {
+  const nodeStream = toNodeReadable(file.stream());
+
+  const contentType = file.type || 'application/octet-stream';
+  const extension = contentType.split('/')[1];
+
+  await minioClient.putObject(bucketName, `${id}.${extension}`, nodeStream, file.size, { 'Content-Type': contentType });
+
+  const fileUrl = `https://minio.mausvil.dev/${bucketName}/${id}.${extension}`;
 
   return fileUrl;
 };
