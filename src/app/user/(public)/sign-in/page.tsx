@@ -94,6 +94,7 @@ const AdminSignIn = () => {
           src="/auth/user1.jpg"
           alt="Image"
           fill
+          style={{ objectFit: 'cover' }}
         />
       </div>
     </div>

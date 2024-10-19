@@ -83,6 +83,7 @@ const SignUpPage = () => {
           src="/auth/admin.jpg"
           alt="Image"
           fill
+          style={{ objectFit: 'cover' }}
         />
       </div>
     </div>
