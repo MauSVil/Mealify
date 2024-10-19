@@ -23,21 +23,13 @@ export default function Page() {
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage className="line-clamp-1">
-                    Project Management & Task Tracking
-                  </BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            Mealify
           </div>
-          {/* <div className="ml-auto px-3">
+          <div className="ml-auto px-3">
             <NavActions />
-          </div> */}
+          </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 px-4 py-10">
+        <div className="flex flex-1 flex-col gap-4 px-10 py-10">
           <BusinessGrid />
         </div>
       </SidebarInset>
