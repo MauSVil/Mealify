@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Product } from "@/lib/types/Zod/Product"
 import Image from "next/image"
 

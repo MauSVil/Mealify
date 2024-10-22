@@ -18,6 +18,7 @@ export type Business = z.infer<typeof BusinessSchema>;
 
 export const BusinessRepositoryFilterModel = z.object({
   owner: z.string().optional(),
+  id: z.string().optional(),
 });
 
 export type BusinessRepositoryFilter = z.infer<typeof BusinessRepositoryFilterModel>;
