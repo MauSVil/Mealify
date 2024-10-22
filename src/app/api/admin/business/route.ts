@@ -6,7 +6,7 @@ import { uploadFile } from "@/lib/services/minio/uploadFile";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const token = req.cookies.get('token')?.value;
+    const token = req.cookies.get('atoken')?.value;
     const formData = await req.formData();
     const body = await formData.get('data');
     const myParsedBody = await JSON.parse(body as string);

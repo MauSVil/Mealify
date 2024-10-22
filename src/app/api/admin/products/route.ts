@@ -7,7 +7,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const cookieStore = cookies();
     const business = cookieStore.get('business')?.value;
-    const token = cookieStore.get('token')?.value;
+    const token = cookieStore.get('atoken')?.value;
 
     if (!token) {
       throw new Error('Token no encontrado');

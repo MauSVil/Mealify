@@ -62,7 +62,7 @@ const PrivateAdminLayout = (props: Props) => {
 
   const handleLogout = () => {
     Cookies.remove('business');
-    Cookies.remove('token');
+    Cookies.remove('atoken');
     router.push('/admin/sign-in');
   }
 
