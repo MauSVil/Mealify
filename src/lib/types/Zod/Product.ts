@@ -6,7 +6,7 @@ export const ProductSchema = z.object({
   description: z.string(),
   price: z.coerce.number().min(1),
   available: z.boolean(),
-  image: z.string(),
+  image: z.any(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   deletedAt: z.coerce.date().optional().nullable(),
