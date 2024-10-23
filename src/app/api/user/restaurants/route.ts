@@ -4,13 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const body = await req.json();
-    const { id, ...rest } = body;
-
-    const restaurant = await BusinessRepository.findOne({
-      ...(id ? { _id: new ObjectId(id) } : {}),
-      ...rest
-    })
+    const body = await req.json()
+    const restaurant = await BusinessRepository.findOne(body);
     return NextResponse.json({ data: restaurant });
   } catch (e) {
     console.log(e);
