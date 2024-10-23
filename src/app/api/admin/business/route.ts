@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
 
     parsedBody.owner = data.id;
 
-    const insertedId =await BusinessRepository.insertOne(parsedBody);
+    const insertedId = await BusinessRepository.insertOne(parsedBody);
     
     const fileURL = await uploadFile('businesses', insertedId, heroImage);
     parsedBody.heroImage = fileURL;

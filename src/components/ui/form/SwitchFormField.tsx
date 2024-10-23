@@ -18,6 +18,8 @@ const SwitchFormField = <T extends FieldValues>(props: SwitchFormFieldProps<T>) 
           <FormControl>
             <Switch
               {...field}
+              checked={field.value}
+              onCheckedChange={field.onChange}
             />
           </FormControl>
           <FormMessage />

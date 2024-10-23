@@ -18,7 +18,7 @@ export const ProductCard = ({ product }: { product: Product }) => {
       </div>
       <div className="relative w-1/3 h-full">
         <Image
-          src="https://minio.mausvil.dev/businesses/67141c4d4373b7d9b4bb9064.jpeg"
+          src={product.image as string}
           alt="Image"
           fill
           className="h-full object-cover rounded-r"

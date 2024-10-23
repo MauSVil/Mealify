@@ -1,30 +1,49 @@
 import { ProductsRepository } from "@/lib/Repositories/Product.repository";
-import { NewProduct } from "@/lib/types/Zod/Product";
-import { cookies } from "next/headers";
+import { uploadFile } from "@/lib/services/minio/uploadFile";
+import { ProductSchema } from "@/lib/types/Zod/Product";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const cookieStore = cookies();
-    const business = cookieStore.get('business')?.value;
-    const token = cookieStore.get('atoken')?.value;
+    const token = req.cookies.get('atoken')?.value;
+    const business = req.cookies.get('business')?.value;
+    const formData = await req.formData();
+    const body = await formData.get('data');
+    const myParsedBody = await JSON.parse(body as string);
+    const image = await formData.get('image');
 
-    if (!token) {
-      throw new Error('Token no encontrado');
+    if (!image || typeof image === 'string') {
+      return NextResponse.json({ error: 'El archivo image no es válido' }, { status: 400 });
     }
 
+    const input = {
+      ...myParsedBody,
+      image,
+    };
+
+    const parsedBody = await ProductSchema.parseAsync(input);
+    if (!token) {
+      throw new Error('Token no encontrado en cookies');
+    }
     if (!business) {
       throw new Error('Business not found');
     }
 
-    const body = await req.json() as NewProduct;
-    body.createdAt = new Date();
-    body.updatedAt = new Date();
-    body.deletedAt = null;
-    body.restaurantId = business
+    parsedBody.createdAt = new Date();
+    parsedBody.updatedAt = new Date();
+    parsedBody.deletedAt = null;
+    parsedBody.restaurantId = business
 
-    await ProductsRepository.insertOne(body);
-    return NextResponse.json({ data: 'Producto creado' });
+    const insertedId = await ProductsRepository.insertOne(parsedBody);
+
+    const fileURL = await uploadFile('products', insertedId, image);
+
+    parsedBody.image = fileURL;
+    parsedBody._id = insertedId;
+
+    await ProductsRepository.updateOne(insertedId, parsedBody);
+
+    return NextResponse.json({ data: parsedBody, error: '' });
   } catch (e) {
     console.log(e);
     if (e instanceof Error) {
