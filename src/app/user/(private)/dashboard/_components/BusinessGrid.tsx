@@ -1,12 +1,15 @@
 "use client"
 
-import { useMemo } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { useBusinesses } from "../_hooks/useBusinesses";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const BusinessGrid = () => {
-  const businessQuery = useBusinesses();
+  const [latitude, setLatitude] = useState<number | undefined>(undefined);
+  const [longitude, setLongitude] = useState<number | undefined>(undefined);
+  const businessQuery = useBusinesses(latitude, longitude);
   const businesses = useMemo(() => businessQuery.data || [], [businessQuery.data]);
 
   const router = useRouter();
@@ -14,6 +17,33 @@ const BusinessGrid = () => {
   const handleBusinessClick = (id: string) => {
     router.push(`/user/businesses/${id}`)
   }
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLatitude(latitude);
+          setLongitude(longitude);
+        },
+        (err) => {
+          toast.error("Error al buscar restaurantes");
+        }
+      );
+    } else {
+      toast.error("Debes habilitar la geolocalización para poder buscar restaurantes");
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  useEffect(() => {
+    if (latitude && longitude) {
+      businessQuery.refetch();
+    }
+  }, [latitude, longitude]);
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

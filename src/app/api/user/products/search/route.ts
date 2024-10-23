@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
-    const products = await ProductsRepository.find({ restaurantId: body.businessId });
+    const products = await ProductsRepository.find({ restaurantId: body.businessId, available: true });
     return NextResponse.json({ data: products });
   } catch (e) {
     console.log(e);
