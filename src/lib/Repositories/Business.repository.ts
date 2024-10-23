@@ -15,7 +15,11 @@ export class BusinessRepository {
   static async findOne(filter: BusinessRepositoryFilter = {}): Promise<Business | null> {
     await init();
     const filters = await BusinessRepositoryFilterModel.parse(filter);
-    const business = await db.collection('businesses').findOne<Business>(filters);
+    const { id, ...rest } = filters;
+    const business = await db.collection('businesses').findOne<Business>({
+      ...(id ? { _id: new ObjectId(id) } : {}),
+      ...rest
+    });
     return business;
   }
 
