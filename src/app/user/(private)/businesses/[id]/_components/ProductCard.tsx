@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button"
+import { useCart } from "@/hooks/useCart";
 import { Product } from "@/lib/types/Zod/Product"
 import Image from "next/image"
 
 export const ProductCard = ({ product }: { product: Product }) => {
+  const { addToCart } = useCart();
+
   return (
     <div className="flex relative items-center justify-between w-full gap-4 min-h-36">
       <div className="h-full flex flex-1 flex-col gap-1 border-r-2 p-4">
@@ -23,7 +26,10 @@ export const ProductCard = ({ product }: { product: Product }) => {
           fill
           className="h-full object-cover rounded-r"
         />
-        <Button className="absolute bottom-2 right-2 h-8 w-8 rounded-full">
+        <Button
+          className="absolute bottom-2 right-2 h-8 w-8 rounded-full"
+          onClick={() => addToCart(product)}
+        >
           +
         </Button>
       </div>
