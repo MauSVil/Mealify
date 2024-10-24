@@ -1,7 +1,7 @@
-import { Product } from "./Zod/Product";
+import { Product, ProductCart } from "./Zod/Product";
 
 export interface CartContextType {
-  cart: Product[];
+  cart: {[id: string]: ProductCart};
   addToCart: (item: Product) => void;
   removeFromCart: (id: string) => void;
 }

@@ -26,3 +26,9 @@ export type ProductRepositoryFilter = z.infer<typeof ProductRepositoryFilterMode
 export const NewProductSchema = ProductSchema.omit({ _id: true });
 
 export type NewProduct = z.infer<typeof NewProductSchema>;
+
+export const ProductCartSchema = ProductSchema.extend({
+  quantity: z.number(),
+});
+
+export type ProductCart = z.infer<typeof ProductCartSchema>;
