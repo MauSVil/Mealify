@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   ShoppingCartIcon,
+  TrashIcon,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -12,8 +13,24 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Label } from "./ui/label"
 import Image from "next/image"
 
+const comission = 5;
+
 export function NavActions() {
-  const { cart } = useCart();
+  const { cart, removeFromCart } = useCart();
+
+  const productsTotal = React.useMemo(() => {
+    return Object.keys(cart).reduce((acc, key) => {
+      const item = cart[key];
+      return acc + item.price * item.quantity;
+    }, 0);
+  }, [cart]);
+
+  const comisionTotal = React.useMemo(() => {
+    return Object.keys(cart).reduce((acc, key) => {
+      const item = cart[key];
+      return acc + item.price * item.quantity * comission / 100;
+    }, 0);
+  }, [cart]);
 
   return (
     <div className="flex items-center gap-2 text-sm">
@@ -57,6 +74,9 @@ export function NavActions() {
                         ${item.price.toFixed(2)} x item
                       </p>
                     </div>
+                    <div className="flex items-center ml-auto cursor-pointer" onClick={() => removeFromCart(item._id!)}>
+                      <TrashIcon className="h-4 w-4 text-red-500" />
+                    </div>
                   </div>
                 </div>
               )
@@ -65,7 +85,27 @@ export function NavActions() {
           </div>
           <SheetFooter>
             <SheetClose asChild>
-              <Button>Pagar</Button>
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">Productos: </p>
+                  <p className="text-xs text-slate-400">
+                    ${productsTotal.toFixed(2)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">Comision (10%): </p>
+                  <p className="text-xs text-slate-400">
+                    ${comisionTotal.toFixed(2)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium">Total: </p>
+                  <p className="text-xs text-slate-400">
+                    ${(productsTotal + comisionTotal).toFixed(2)}
+                  </p>
+                </div>
+                <Button disabled={Object.keys(cart).length === 0}>Pagar</Button>
+              </div>
             </SheetClose>
           </SheetFooter>
         </SheetContent>

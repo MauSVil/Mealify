@@ -15,22 +15,24 @@ const Providers = ({ children }: { children: ReactNode }) => {
   const queryClient = new QueryClient();
 
   return (
-    <CartProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
-          <TooltipProvider>
-            <Toaster richColors />
-            {children}
-          </TooltipProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </CartProvider>
+    <>
+      <Toaster richColors />
+      <CartProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+            <TooltipProvider>
+              {children}
+            </TooltipProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </CartProvider>
+    </>
   );
 }
 
