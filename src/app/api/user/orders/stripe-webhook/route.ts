@@ -12,13 +12,21 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    req.headers.set('Content-Type', 'application/json');
+
     const body = await req.arrayBuffer();
     const buf = Buffer.from(body);
 
     const event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
 
-    if (event.type === 'checkout.session.completed') {
-      console.log('CheckoutSession completed');
+    if (event.type === 'payment_intent.succeeded') {
+      const paymentIntent = event.data.object as Stripe.PaymentIntent;
+      console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
+    } else if (event.type === 'charge.succeeded') {
+      const charge = event.data.object as Stripe.Charge;
+      console.log(`💵 Charge id: ${charge.id}`);
+    } else {
+      console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
     }
 
     return NextResponse.json({ received: true }, { status: 200 });
