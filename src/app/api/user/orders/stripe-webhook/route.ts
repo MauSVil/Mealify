@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
     const sig = req.headers.get('stripe-signature');
     if (!sig) throw new Error('No se encontró la firma de Stripe');
 
-    const body = await req.arrayBuffer();
+    const body = await req.clone().arrayBuffer();
     const buf = Buffer.from(body);
 
     const event = stripe.webhooks.constructEvent(
@@ -17,13 +17,12 @@ export const POST = async (req: NextRequest) => {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
 
-    console.log(event.type, 'event received');
-
-    if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
+    if (event.type === 'checkout.session.completed') {
       console.log('CheckoutSession completed');
     }
 
     return NextResponse.json({ received: true }, { status: 200 });
+
   } catch (e) {
     console.log(e);
     if (e instanceof Error) {
