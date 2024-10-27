@@ -18,6 +18,7 @@ export type Order = z.infer<typeof OrderSchema>;
 
 export const OrderRepositoryFilterModel = z.object({
   id: z.string().optional(),
+  checkoutSessionId: z.string().optional(),
 });
 
 export type OrderRepositoryFilter = z.infer<typeof OrderRepositoryFilterModel>;

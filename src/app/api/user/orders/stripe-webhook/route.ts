@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
+import { OrderRepository } from '@/lib/Repositories/Order.repository';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -19,14 +20,14 @@ export async function POST(req: NextRequest) {
 
     const event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
 
-    if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
-    } else if (event.type === 'charge.succeeded') {
-      const charge = event.data.object as Stripe.Charge;
-      console.log(`💵 Charge id: ${charge.id}`);
-    } else {
-      console.warn(`🤷‍♀️ Unhandled event type: ${event.type}`);
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const sessionId = session.id;
+      const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
+      if (!order) {
+        return NextResponse.json({ error: 'No se encontró la orden' }, { status: 400 });
+      }
+      await OrderRepository.updateOne(order._id!, { status: 'paid' });
     }
 
     return NextResponse.json({ received: true }, { status: 200 });
