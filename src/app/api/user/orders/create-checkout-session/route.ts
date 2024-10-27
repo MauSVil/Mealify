@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ProductCart } from "@/lib/types/Zod/Product";
 import { BusinessRepository } from "@/lib/Repositories/Business.repository";
 import ky from "ky";
+import jwt from 'jsonwebtoken';
+import { headers } from "next/headers";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -10,6 +12,15 @@ const commission = 5;
 
 export const POST = async (req: NextRequest) => {
   try {
+
+    const cookieStore = req.cookies;
+    const token = cookieStore.get('utoken')?.value;
+    if (!token) {
+      throw new Error('Token no encontrado');
+    }
+
+    const user = await jwt.verify(token, process.env.USER_JWT_SECRET!) as { id: string };
+
     const body = await req.json();
     const { products, userLon, userLat } = body as {
       products: { [id: string]: ProductCart },
@@ -89,6 +100,21 @@ export const POST = async (req: NextRequest) => {
       success_url: `${req.headers.get('origin')}/user/orders/success`,
       cancel_url: `${req.headers.get('origin')}/user/orders/cancel`,
     });
+
+    await ky.post(`${req.headers.get('origin')}/api/user/orders`, { json: {
+      checkoutSessionId: session.id,
+      restaurant: products[Object.keys(products)[0]].restaurantId,
+      user: user.id,
+      products: Object.keys(products).map((key) => {
+        const product = products[key];
+        return {
+          id: product._id,
+          name: product.name,
+          price: product.price,
+          quantity: product.quantity,
+        };
+      }),
+    }, headers: { authorization: token }}).json();
 
     return NextResponse.json({ data: session.id });
   } catch (e) {
