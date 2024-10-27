@@ -5,15 +5,18 @@ import {
   ShoppingCartIcon,
   TrashIcon,
 } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
+import { loadStripe } from '@stripe/stripe-js';
 import { Input } from "./ui/input"
 import { useCart } from "@/hooks/useCart"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet"
 import { Label } from "./ui/label"
 import Image from "next/image"
+import ky from "ky";
+import { Separator } from "./ui/separator";
 
 const comission = 5;
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export function NavActions() {
   const { cart, removeFromCart } = useCart();
@@ -31,6 +34,30 @@ export function NavActions() {
       return acc + item.price * item.quantity * comission / 100;
     }, 0);
   }, [cart]);
+
+  const handleCheckout = async () => {
+    const stripe = await stripePromise;
+    if (!stripe) {
+      alert('No se pudo cargar Stripe');
+      return;
+    }
+    
+    const checkoutSession = await ky.post('/api/user/orders/create-checkout-session', {
+      json: {
+        products: cart,
+        userLon: -99.236221,
+        userLat: 19.545230,
+      }
+    }).json() as { data?: string, error?: string };
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: checkoutSession?.data as string,
+    });
+    
+    if (result.error) {
+      alert(result.error.message);
+    }
+  };
 
   return (
     <div className="flex items-center gap-2 text-sm">
@@ -93,7 +120,7 @@ export function NavActions() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">Comision (10%): </p>
+                  <p className="text-sm font-medium">Comision (5%): </p>
                   <p className="text-xs text-slate-400">
                     ${comisionTotal.toFixed(2)}
                   </p>
@@ -104,7 +131,8 @@ export function NavActions() {
                     ${(productsTotal + comisionTotal).toFixed(2)}
                   </p>
                 </div>
-                <Button disabled={Object.keys(cart).length === 0}>Pagar</Button>
+                <Separator />
+                <Button disabled={Object.keys(cart).length === 0} onClick={handleCheckout}>Pagar</Button>
               </div>
             </SheetClose>
           </SheetFooter>
