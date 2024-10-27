@@ -32,9 +32,3 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: 'Error [CreateOrderUserAdmin]' }, { status: 400 });
   }
 };
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
