@@ -5,6 +5,7 @@ import { BusinessRepository } from "@/lib/Repositories/Business.repository";
 import ky from "ky";
 import jwt from 'jsonwebtoken';
 import { headers } from "next/headers";
+import { validateIfToken } from "@/lib/utils";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -12,12 +13,7 @@ const commission = 5;
 
 export const POST = async (req: NextRequest) => {
   try {
-
-    const cookieStore = req.cookies;
-    const token = cookieStore.get('utoken')?.value;
-    if (!token) {
-      throw new Error('Token no encontrado');
-    }
+    const token = await validateIfToken(req, 'utoken');
 
     const user = await jwt.verify(token, process.env.USER_JWT_SECRET!) as { id: string };
 

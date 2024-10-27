@@ -1,4 +1,5 @@
 import { ProductsRepository } from "@/lib/Repositories/Product.repository";
+import { validateIfToken } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,11 +7,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const cookieStore = cookies();
     const business = cookieStore.get('business')?.value;
-    const token = cookieStore.get('atoken')?.value;
-
-    if (!token) {
-      throw new Error('Token no encontrado');
-    }
+    const token = await validateIfToken(req, 'atoken');
 
     if (!business) {
       throw new Error('Business not found');

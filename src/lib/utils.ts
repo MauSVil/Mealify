@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Business } from "./types/Zod/Business";
+import { NextRequest } from "next/server";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -28,4 +29,12 @@ export const findNearbyRestaurants = (userLat: number, userLon: number, restaura
     const distance = haversineDistance(userLat, userLon, restaurant.latitude, restaurant.longitude);
     return distance <= maxDistanceKm;
   });
+}
+
+export const validateIfToken = async (req: NextRequest, cookieKey: string) => {
+  const token = req.cookies.get(cookieKey)?.value;
+  if (!token) {
+    throw new Error('Token no encontrado');
+  }
+  return token;
 }

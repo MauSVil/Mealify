@@ -1,11 +1,12 @@
 import { ProductsRepository } from "@/lib/Repositories/Product.repository";
 import { uploadFile } from "@/lib/services/minio/uploadFile";
 import { ProductSchema } from "@/lib/types/Zod/Product";
+import { validateIfToken } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const token = req.cookies.get('atoken')?.value;
+    await validateIfToken(req, 'atoken');
     const business = req.cookies.get('business')?.value;
     const formData = await req.formData();
     const body = await formData.get('data');
@@ -22,9 +23,6 @@ export const POST = async (req: NextRequest) => {
     };
 
     const parsedBody = await ProductSchema.parseAsync(input);
-    if (!token) {
-      throw new Error('Token no encontrado en cookies');
-    }
     if (!business) {
       throw new Error('Business not found');
     }

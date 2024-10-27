@@ -1,14 +1,11 @@
 import { OrderRepository } from "@/lib/Repositories/Order.repository";
 import { OrderSchema } from "@/lib/types/Zod/Order";
+import { validateIfToken } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const cookieStore = req.cookies;
-    const token = cookieStore.get('utoken')?.value || req.headers.get('authorization');
-    if (!token) {
-      throw new Error('Token no encontrado');
-    }
+    await validateIfToken(req, 'utoken');
 
     const body = await req.json();
     const parsedBody = await OrderSchema.parseAsync(body);

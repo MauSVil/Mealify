@@ -3,10 +3,11 @@ import { BusinessSchema } from "@/lib/types/Zod/Business";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import { uploadFile } from "@/lib/services/minio/uploadFile";
+import { validateIfToken } from "@/lib/utils";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const token = req.cookies.get('atoken')?.value;
+    const token = await validateIfToken(req, 'atoken');
     const formData = await req.formData();
     const body = await formData.get('data');
     const myParsedBody = await JSON.parse(body as string);
@@ -22,9 +23,6 @@ export const POST = async (req: NextRequest) => {
     };
 
     const parsedBody = await BusinessSchema.parseAsync(input);
-    if (!token) {
-      return NextResponse.json({ error: 'Token no encontrado' }, { status: 400 });
-    }
 
     const data = await jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
 
