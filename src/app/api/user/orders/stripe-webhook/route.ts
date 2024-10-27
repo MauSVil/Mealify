@@ -8,11 +8,11 @@ export const POST = async (req: NextRequest) => {
     const sig = req.headers.get('stripe-signature');
     if (!sig) throw new Error('No se encontró la firma de Stripe');
 
-    const body = await req.clone().arrayBuffer();
-    const buf = Buffer.from(body);
+    const body = await req.arrayBuffer();
+    const rawBody = new TextDecoder('utf-8').decode(body);
 
     const event = stripe.webhooks.constructEvent(
-      buf,
+      rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
