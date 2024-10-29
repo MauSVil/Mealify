@@ -32,7 +32,7 @@ export const findNearbyRestaurants = (userLat: number, userLon: number, restaura
 }
 
 export const validateIfToken = async (req: NextRequest, cookieKey: string) => {
-  const token = req.cookies.get(cookieKey)?.value;
+  const token = req.cookies.get(cookieKey)?.value || req.headers.get('authorization');
   if (!token) {
     throw new Error('Token no encontrado');
   }

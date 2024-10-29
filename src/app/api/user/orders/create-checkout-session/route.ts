@@ -4,12 +4,11 @@ import { ProductCart } from "@/lib/types/Zod/Product";
 import { BusinessRepository } from "@/lib/Repositories/Business.repository";
 import ky from "ky";
 import jwt from 'jsonwebtoken';
-import { headers } from "next/headers";
 import { validateIfToken } from "@/lib/utils";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const commission = 5;
+const commission = 10;
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -27,15 +26,15 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: 'No hay productos' }, { status: 400 });
     }
 
-    const restaurant = await BusinessRepository.findOne({ id: products[Object.keys(products)[0]].restaurantId });
-    if (!restaurant) {
-      return NextResponse.json({ error: 'Restaurante no encontrado' }, { status: 400 });
+    const business = await BusinessRepository.findOne({ id: products[Object.keys(products)[0]].restaurantId });
+    if (!business) {
+      return NextResponse.json({ error: 'Negocio no encontrado' }, { status: 400 });
     }
 
     const eta = await ky.post(`${req.headers.get('origin')}/api/user/orders/eta`, {
       json: {
         user: { longitude: userLon, latitude: userLat },
-        restaurant: { longitude: restaurant.longitude, latitude: restaurant.latitude },
+        restaurant: { longitude: business.longitude, latitude: business.latitude },
       }
     }).json() as {
       durationInSeconds: number,
@@ -68,19 +67,6 @@ export const POST = async (req: NextRequest) => {
       price_data: {
         currency: 'mxn',
         product_data: {
-          name: 'Comisión de servicio',
-          images: [],
-        },
-        unit_amount: commissionAmount,
-      },
-      quantity: 1,
-    });
-
-
-    lineItems.push({
-      price_data: {
-        currency: 'mxn',
-        product_data: {
           name: 'Gastos de envío',
           images: [],
         },
@@ -89,12 +75,30 @@ export const POST = async (req: NextRequest) => {
       quantity: 1,
     });
 
+    lineItems.push({
+      price_data: {
+        currency: 'mxn',
+        product_data: {
+          name: 'Comision (10%)',
+          images: [],
+        },
+        unit_amount: commissionAmount,
+      },
+      quantity: 1,
+    });
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${req.headers.get('origin')}/user/orders/success`,
-      cancel_url: `${req.headers.get('origin')}/user/orders/cancel`,
+      success_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/success`,
+      cancel_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/cancel`,
+      payment_intent_data: {
+        application_fee_amount: commissionAmount,
+        transfer_data: {
+          destination: business.stripeAccountId || '',
+        },
+      },
     });
 
     await ky.post(`${req.headers.get('origin')}/api/user/orders`, { json: {

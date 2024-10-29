@@ -15,7 +15,7 @@ import Image from "next/image"
 import ky from "ky";
 import { Separator } from "./ui/separator";
 
-const comission = 5;
+const comission = 10;
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export function NavActions() {
@@ -120,7 +120,7 @@ export function NavActions() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">Comision (5%): </p>
+                  <p className="text-sm font-medium">Comision (10%): </p>
                   <p className="text-xs text-slate-400">
                     ${comisionTotal.toFixed(2)}
                   </p>
