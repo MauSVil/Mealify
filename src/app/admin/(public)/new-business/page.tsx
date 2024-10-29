@@ -22,6 +22,7 @@ const defaultValues: Omit<Business, "heroImage"> = {
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
+  stripeAccountId: null,
 };
 
 const NewBusinessPage = () => {

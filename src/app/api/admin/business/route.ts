@@ -20,7 +20,6 @@ export const POST = async (req: NextRequest) => {
     const input = {
       ...myParsedBody,
       heroImage,
-      stripeAccountId: null,
     };
 
     const parsedBody = await BusinessSchema.parseAsync(input);
