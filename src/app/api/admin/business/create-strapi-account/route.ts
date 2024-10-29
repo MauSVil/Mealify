@@ -10,7 +10,6 @@ export const POST = async (req: NextRequest) => {
 
     const business = await BusinessRepository.findOne({ id: businessId });
     if (!business) throw new Error('Business not found');
-    if (!business.stripeAccountId) throw new Error('Stripe account not found');
 
     if (business.stripeAccountId) {
       const accountLink = await stripe.accountLinks.create({
