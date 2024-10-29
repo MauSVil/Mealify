@@ -24,7 +24,7 @@ const defaultValues: Omit<Business, "heroImage"> = {
   deletedAt: null,
 };
 
-const OnboardPage = () => {
+const NewBusinessPage = () => {
   const form = useForm<Business>({
     defaultValues,
     mode: "onChange",
@@ -130,4 +130,4 @@ const OnboardPage = () => {
   )
 }
 
-export default OnboardPage;
+export default NewBusinessPage;

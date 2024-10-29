@@ -107,10 +107,10 @@ const ProductsPage = () => {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="flex justify-end gap-4">
-        <Button>
+        <Button variant="outline">
           Importar
         </Button>
-        <Button onClick={() => router.push('/admin/products/new')}>
+        <Button variant="outline" onClick={() => router.push('/admin/products/new')}>
           Nuevo producto
         </Button>
       </div>

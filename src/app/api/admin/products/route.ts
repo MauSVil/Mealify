@@ -1,13 +1,13 @@
 import { ProductsRepository } from "@/lib/Repositories/Product.repository";
 import { uploadFile } from "@/lib/services/minio/uploadFile";
 import { ProductSchema } from "@/lib/types/Zod/Product";
-import { validateIfToken } from "@/lib/utils";
+import { validateIfBusiness, validateIfToken } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
     await validateIfToken(req, 'atoken');
-    const business = req.cookies.get('business')?.value;
+    const business = await validateIfBusiness(req);
     const formData = await req.formData();
     const body = await formData.get('data');
     const myParsedBody = await JSON.parse(body as string);
@@ -23,9 +23,6 @@ export const POST = async (req: NextRequest) => {
     };
 
     const parsedBody = await ProductSchema.parseAsync(input);
-    if (!business) {
-      throw new Error('Business not found');
-    }
 
     parsedBody.createdAt = new Date();
     parsedBody.updatedAt = new Date();

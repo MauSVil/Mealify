@@ -38,3 +38,11 @@ export const validateIfToken = async (req: NextRequest, cookieKey: string) => {
   }
   return token;
 }
+
+export const validateIfBusiness = async (req: NextRequest) => {
+  const business = req.cookies.get('business')?.value;
+  if (!business) {
+    throw new Error('Business not found');
+  }
+  return business;
+}

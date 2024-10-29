@@ -12,6 +12,7 @@ export const BusinessSchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   deletedAt: z.coerce.date().nullable(),
+  stripeAccountId: z.string().optional(),
 });
 
 export type Business = z.infer<typeof BusinessSchema>;

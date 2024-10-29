@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import { BusinessRepository } from "@/lib/Repositories/Business.repository";
-import { cookies } from 'next/headers';
 import { validateIfToken } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (req: NextRequest) => {
   try {
-    const cookieStore = cookies();
     const token = await validateIfToken(req, 'atoken');
 
     const data = await jwt.verify(token, process.env.JWT_SECRET!) as { id: string };

@@ -81,7 +81,7 @@ export function DataTable<TData>({
         }
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="ml-auto">
+            <Button className="ml-auto" variant="secondary">
               Mostrar columnas
             </Button>
           </DropdownMenuTrigger>

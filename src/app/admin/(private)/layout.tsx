@@ -42,10 +42,6 @@ const PrivateAdminLayout = (props: Props) => {
   const clientsQuery = useClients();
   const clients = useMemo(() => clientsQuery.data?.data || [], [clientsQuery.data]) as Business[];
 
-  if (!clientsQuery.isLoading && clients.length === 0 && Cookies.get('business') === '') {
-    router.replace('/admin/onboard')
-  }
-
   const handleBusinessSelectChange = (value: string) => {
     Cookies.set('business', value);
   };
@@ -64,6 +60,10 @@ const PrivateAdminLayout = (props: Props) => {
     Cookies.remove('business');
     Cookies.remove('atoken');
     router.push('/admin/sign-in');
+  }
+
+  const handleNewBusinessClick = () => {
+    router.push('/admin/new-business')
   }
 
   return (
@@ -167,7 +167,11 @@ const PrivateAdminLayout = (props: Props) => {
         </Sheet>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <div className="ml-auto flex-1 sm:flex-initial">
-            <Select disabled={clientsQuery.isLoading} onValueChange={handleBusinessSelectChange} value={selectedBusiness}>
+            <Select
+              disabled={clientsQuery.isLoading || clients.length === 0}
+              onValueChange={handleBusinessSelectChange}
+              value={selectedBusiness}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Selecciona un cliente" />
               </SelectTrigger>
@@ -182,6 +186,9 @@ const PrivateAdminLayout = (props: Props) => {
               </SelectContent>
             </Select>
           </div>
+          <Button onClick={handleNewBusinessClick}>
+            Crea un nuevo negocio
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">

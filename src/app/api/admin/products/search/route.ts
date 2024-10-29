@@ -1,17 +1,11 @@
 import { ProductsRepository } from "@/lib/Repositories/Product.repository";
-import { validateIfToken } from "@/lib/utils";
-import { cookies } from "next/headers";
+import { validateIfBusiness, validateIfToken } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const cookieStore = cookies();
-    const business = cookieStore.get('business')?.value;
-    const token = await validateIfToken(req, 'atoken');
-
-    if (!business) {
-      throw new Error('Business not found');
-    }
+    const business = await validateIfBusiness(req);
+    await validateIfToken(req, 'atoken');
 
     const products = await ProductsRepository.find({ restaurantId: business });
 
