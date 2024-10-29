@@ -5,9 +5,7 @@ import {
   CircleUser,
   Menu,
   Package2,
-  Search,
 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -44,6 +42,8 @@ const PrivateAdminLayout = (props: Props) => {
 
   const handleBusinessSelectChange = (value: string) => {
     Cookies.set('business', value);
+    router.refresh();
+    setSelectedBusiness(value);
   };
 
   useEffect(() => {
