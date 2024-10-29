@@ -14,8 +14,8 @@ export const POST = async (req: NextRequest) => {
     if (business.stripeAccountId) {
       const accountLink = await stripe.accountLinks.create({
         account: business.stripeAccountId,
-        return_url: `http://localhost:3000/admin/business/${businessId}`,
-        refresh_url: `http://localhost:3000/admin/business/${businessId}`,
+        return_url: `${req.headers.get("origin")}/admin/business/${businessId}`,
+        refresh_url: `${req.headers.get("origin")}/admin/business/${businessId}`,
         type: 'account_onboarding',
       });
       return NextResponse.json({ data: accountLink.url, error: '' });
@@ -27,8 +27,8 @@ export const POST = async (req: NextRequest) => {
 
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
-      return_url: `http://localhost:3000/admin/business/${businessId}`,
-      refresh_url: `http://localhost:3000/admin/business/${businessId}`,
+      return_url: `${req.headers.get("origin")}/admin/business/${businessId}`,
+      refresh_url: `${req.headers.get("origin")}/admin/business/${businessId}`,
       type: 'account_onboarding',
     });
 
