@@ -3,11 +3,11 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { createContext, ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import { ReactQueryDevtools } from 'react-query/devtools'
 import { CartContextType } from "@/lib/types/Cart";
 import { CartProvider } from "./_providers/CartProvider";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -25,7 +25,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
             enableSystem
             disableTransitionOnChange
           >
-            <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+            <ReactQueryDevtools position="left" buttonPosition="bottom-left" />
             <TooltipProvider>
               {children}
             </TooltipProvider>

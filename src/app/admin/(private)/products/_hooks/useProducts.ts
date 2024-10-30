@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import ky, { HTTPError } from "ky";
 import { Product } from "@/lib/types/Zod/Product";
 import { toast } from "sonner";

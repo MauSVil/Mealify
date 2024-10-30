@@ -1,6 +1,6 @@
 import { Business } from "@/lib/types/Zod/Business";
 import ky from "ky";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export const useBusinesses = (lat: number | undefined, long: number | undefined) => {
   return useQuery({

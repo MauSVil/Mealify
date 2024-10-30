@@ -5,6 +5,7 @@ import { useBusinesses } from "../_hooks/useBusinesses";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import BusinessGridLoading from "./BusinessGridLoading";
 
 const BusinessGrid = () => {
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
@@ -44,6 +45,11 @@ const BusinessGrid = () => {
       businessQuery.refetch();
     }
   }, [latitude, longitude]);
+
+
+  if (businessQuery.isLoading || businessQuery.isFetching || businesses.length === 0) {
+    return <BusinessGridLoading />
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

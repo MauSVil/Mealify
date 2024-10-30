@@ -1,6 +1,6 @@
 import { Product } from "@/lib/types/Zod/Product";
 import ky from "ky";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const useProducts = (businessId: string) => {

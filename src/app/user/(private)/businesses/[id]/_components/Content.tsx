@@ -8,6 +8,7 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { ProductCard } from "./ProductCard";
 import { useClient } from "../_hooks/useClient";
 import { Business } from "@/lib/types/Zod/Business";
+import BusinessIdContentLoading from "./BusinessIdContentLoading";
 
 interface Props {
   id: string
@@ -19,6 +20,10 @@ const BusinessIdContent = (props: Props) => {
 
   const clientQuery = useClient(props.id);
   const client = useMemo(() => clientQuery.data || {}, [clientQuery.data]) as Business;
+
+  if (clientQuery.isLoading || clientQuery.isFetching || productsQuery.isLoading || productsQuery.isFetching) {
+    return <BusinessIdContentLoading />
+  }
 
   return (
     <div className="flex flex-col gap-12">

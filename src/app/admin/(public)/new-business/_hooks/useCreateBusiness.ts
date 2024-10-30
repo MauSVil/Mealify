@@ -2,7 +2,7 @@ import { SerializedError } from "@/lib/types/SerializedError";
 import { Business } from "@/lib/types/Zod/Business";
 import ky from "ky";
 import { useRouter } from "next/navigation";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 

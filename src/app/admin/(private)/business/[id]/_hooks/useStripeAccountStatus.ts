@@ -1,5 +1,5 @@
 import ky from "ky";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export const useStripeAccountStatus = (businessId: string) => {
   return useQuery({
