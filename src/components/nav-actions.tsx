@@ -15,7 +15,6 @@ import Image from "next/image"
 import ky from "ky";
 import { Separator } from "./ui/separator";
 
-const comission = 10;
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export function NavActions() {
@@ -25,13 +24,6 @@ export function NavActions() {
     return Object.keys(cart).reduce((acc, key) => {
       const item = cart[key];
       return acc + item.price * item.quantity;
-    }, 0);
-  }, [cart]);
-
-  const comisionTotal = React.useMemo(() => {
-    return Object.keys(cart).reduce((acc, key) => {
-      const item = cart[key];
-      return acc + item.price * item.quantity * comission / 100;
     }, 0);
   }, [cart]);
 
@@ -117,18 +109,6 @@ export function NavActions() {
                   <p className="text-sm font-medium">Productos: </p>
                   <p className="text-xs text-slate-400">
                     ${productsTotal.toFixed(2)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">Comision (10%): </p>
-                  <p className="text-xs text-slate-400">
-                    ${comisionTotal.toFixed(2)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium">Total: </p>
-                  <p className="text-xs text-slate-400">
-                    ${(productsTotal + comisionTotal).toFixed(2)}
                   </p>
                 </div>
                 <Separator />

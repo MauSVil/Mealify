@@ -80,7 +80,8 @@ export const POST = async (req: NextRequest) => {
 
       const distanceInKm = distanceInMeters / 1000;
       const costPerKm = 5;
-      const shippingCost = distanceInKm * costPerKm;
+      const baseShippingCost = 15;
+      const shippingCost = (distanceInKm * costPerKm) + baseShippingCost;
 
       return NextResponse.json({
         durationInSeconds,

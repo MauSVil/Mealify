@@ -8,7 +8,12 @@ import { validateIfToken } from "@/lib/utils";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const commission = 10;
+const stripeComission = 4;
+const deliveryPerson = 5;
+const myComission = 10;
+
+const initialCommission = 19;
+const commission = myComission + stripeComission + deliveryPerson;
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -62,6 +67,7 @@ export const POST = async (req: NextRequest) => {
     });
 
     const commissionAmount = Math.round(subtotal * (commission / 100));
+    const initialCommissionAmount = Math.round(subtotal * (initialCommission / 100));
 
     lineItems.push({
       price_data: {
@@ -79,10 +85,10 @@ export const POST = async (req: NextRequest) => {
       price_data: {
         currency: 'mxn',
         product_data: {
-          name: 'Comision (10%)',
+          name: 'Comision',
           images: [],
         },
-        unit_amount: commissionAmount,
+        unit_amount: initialCommissionAmount,
       },
       quantity: 1,
     });
