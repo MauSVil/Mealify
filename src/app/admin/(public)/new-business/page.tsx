@@ -157,8 +157,8 @@ const NewBusinessPage = () => {
             Cancelar
           </Button>
           <Button onClick={onSubmit}>
-            {createBusiness.isLoading &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {createBusiness.isLoading ? "Creando negocio..." : "Continuar"}
+            {createBusiness.isPending &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {createBusiness.isPending ? "Creando negocio..." : "Continuar"}
           </Button>
         </CardFooter>
       </Card>

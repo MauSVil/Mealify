@@ -10,12 +10,5 @@ export const useProducts = (businessId: string) => {
       const resp = await ky.post("/api/user/products/search", { json: { businessId } }).json() as { data?: Product[], error?: string };
       return resp.data || [];
     },
-    onError: (error) => {
-      if (error instanceof Error) {
-        toast.error(error.message);
-        return;
-      }
-      toast.error("Error al buscar productos");
-    },
   })
 };

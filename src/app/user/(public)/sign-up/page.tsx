@@ -70,8 +70,8 @@ const SignUpPage = () => {
                 <Button
                   type="submit"
                 >
-                  {mutation.isLoading &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {mutation.isLoading ? "Registrando..." : "Registrarse"}
+                  {mutation.isPending &&  <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {mutation.isPending ? "Registrando..." : "Registrarse"}
                 </Button>
               </form>
             </Form>

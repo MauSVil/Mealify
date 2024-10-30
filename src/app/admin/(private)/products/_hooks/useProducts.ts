@@ -13,9 +13,9 @@ export const useProducts = () => {
       return resp.data || [];
     },
     refetchOnWindowFocus: false,
-    onError: async (error: HTTPError) => {
-      const errorBody = await error.response.json<{ error?: string }>();
-      toast.error(errorBody.error || error.message);
-    },
+    // onError: async (error: HTTPError) => {
+    //   const errorBody = await error.response.json<{ error?: string }>();
+    //   toast.error(errorBody.error || error.message);
+    // },
   });
 };
