@@ -8,7 +8,7 @@ import { validateIfToken } from "@/lib/utils";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-const stripeComission = 4;
+const stripeComission = 7;
 const deliveryPerson = 5;
 const myComission = 10;
 
