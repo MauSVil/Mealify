@@ -31,16 +31,39 @@ export async function POST(req: NextRequest) {
     //   await OrderRepository.updateOne(order._id!, { status: 'paid' });
     // }
   
-    if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object;
-      const paymentIntentId = paymentIntent.id;
-      const chargeId = paymentIntent.latest_charge;
+    // if (event.type === 'payment_intent.succeeded') {
+    //   const paymentIntent = event.data.object;
+    //   const paymentIntentId = paymentIntent.id;
+    //   const chargeId = paymentIntent.latest_charge;
   
-      const charge = await stripe.charges.retrieve(chargeId as string);
+    //   const charge = await stripe.charges.retrieve(chargeId as string);
+    //   const balanceTransactionId = charge.balance_transaction;
+  
+    //   if (balanceTransactionId) {
+    //     const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string);
+    //     const netAmount = balanceTransaction.net;
+  
+    //     console.log(`Monto neto después de comisiones: ${netAmount}`);
+  
+    //     const platformFee = Math.round(netAmount * 0.10);
+    //     const deliveryFee = Math.round(netAmount * 0.05);
+    //     const restaurantAmount = netAmount - platformFee - deliveryFee;
+  
+    //     console.log(`Comisión para plataforma: ${platformFee}`);
+    //     console.log(`Comisión para repartidor: ${deliveryFee}`);
+    //     console.log(`Monto para el restaurante: ${restaurantAmount}`);
+  
+    //   } else {
+    //     console.error('No se encontró el balance_transaction para el charge.');
+    //   }
+    // }
+
+    if (event.type === 'charge.succeeded') {
+      const charge = event.data.object;
       const balanceTransactionId = charge.balance_transaction;
   
       if (balanceTransactionId) {
-        const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string);
+        const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string, { expand: ['source'] });
         const netAmount = balanceTransaction.net;
   
         console.log(`Monto neto después de comisiones: ${netAmount}`);
@@ -52,7 +75,8 @@ export async function POST(req: NextRequest) {
         console.log(`Comisión para plataforma: ${platformFee}`);
         console.log(`Comisión para repartidor: ${deliveryFee}`);
         console.log(`Monto para el restaurante: ${restaurantAmount}`);
-  
+        
+        // Realiza las transferencias a cuentas conectadas si es necesario
       } else {
         console.error('No se encontró el balance_transaction para el charge.');
       }
