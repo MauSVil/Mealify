@@ -5,6 +5,8 @@ import { BusinessRepository } from "@/lib/Repositories/Business.repository";
 import ky from "ky";
 import jwt from 'jsonwebtoken';
 import { validateIfToken } from "@/lib/utils";
+import { OrderRepository } from "@/lib/Repositories/Order.repository";
+import { Order } from "@/lib/types/Zod/Order";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -94,31 +96,38 @@ export const POST = async (req: NextRequest) => {
       quantity: 1,
     });
 
+    const orderToAdd: Order = {
+      restaurant: products[Object.keys(products)[0]].restaurantId!,
+      user: user.id,
+      products: Object.keys(products).map((key) => {
+        const product = products[key];
+        return {
+          id: product._id!,
+          name: product.name,
+          price: product.price,
+          quantity: product.quantity,
+        };
+      }),
+      status: 'pending',
+      checkoutSessionId: '',
+      paymentIntentId: '',
+      shippingAmount: shippingCost,
+    }
+
+    const insertedId = await OrderRepository.insertOne(orderToAdd);
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/success`,
+      success_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/${insertedId}`,
       cancel_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/cancel`,
       metadata: {
         shippingAmount: shippingCost,
       },
     });
 
-    await ky.post(`${req.headers.get('origin')}/api/user/orders`, { json: {
-      checkoutSessionId: session.id,
-      restaurant: products[Object.keys(products)[0]].restaurantId,
-      user: user.id,
-      products: Object.keys(products).map((key) => {
-        const product = products[key];
-        return {
-          id: product._id,
-          name: product.name,
-          price: product.price,
-          quantity: product.quantity,
-        };
-      }),
-    }, headers: { authorization: token }}).json();
+    await OrderRepository.updateOne(insertedId, { checkoutSessionId: session.id });
 
     return NextResponse.json({ data: session.id });
   } catch (e) {

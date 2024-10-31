@@ -37,9 +37,9 @@ export class OrderRepository {
     return insertedId.toString();
   }
 
-  static async updateOne(id: string, business: Partial<Order>): Promise<string> {
+  static async updateOne(id: string, order: Partial<Order>): Promise<string> {
     await init();
-    const { _id, ...rest } = business;
+    const { _id, ...rest } = order;
 
     if (!id) {
       throw new Error('Id not found');
