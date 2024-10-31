@@ -24,13 +24,11 @@ export async function POST(req: NextRequest) {
       const session = event.data.object;
       const sessionId = session.id;
   
-      // Actualizar la orden en tu base de datos
-      const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
-      if (!order) {
-        throw new Error('No se encontró la orden');
-      }
-      await OrderRepository.updateOne(order._id!, { status: 'paid' });
-      console.log(`Orden ${order._id} actualizada a 'paid'`);
+      // const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
+      // if (!order) {
+      //   throw new Error('No se encontró la orden');
+      // }
+      // await OrderRepository.updateOne(order._id!, { status: 'paid' });
   
       const shippingAmount = session.metadata?.shippingAmount || 0;
       console.log(`Monto de envío: ${shippingAmount}`);
@@ -41,26 +39,52 @@ export async function POST(req: NextRequest) {
   
       const charge = await stripe.charges.retrieve(chargeId as string);
       const balanceTransactionId = charge.balance_transaction;
+
+      let withStripeFee = false;
+      let amount = charge.amount;
   
       if (balanceTransactionId) {
         const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string);
         const netAmount = balanceTransaction.net;
-  
+        amount = netAmount;
+        withStripeFee = true;
         console.log(`Monto neto después de comisiones: ${netAmount}`);
-  
-        // Cálculo de comisiones y distribución
-        const platformFee = Math.round(netAmount * 0.10);
-        const deliveryFee = Math.round(netAmount * 0.05);
-        const restaurantAmount = netAmount - platformFee - deliveryFee;
-  
-        console.log(`Comisión para plataforma: ${platformFee}`);
-        console.log(`Comisión para repartidor: ${deliveryFee}`);
-        console.log(`Monto para el restaurante: ${restaurantAmount}`);
-  
-        // Realiza las transferencias a cuentas conectadas si es necesario
       } else {
         console.error('No se encontró el balance_transaction para el charge.');
       }
+
+      const stripeFee = Math.round(amount * 0.04);
+      const platformFee = Math.round(amount * 0.10);
+      const deliveryFee = Math.round(amount * 0.05);
+      let restaurantAmount = amount - platformFee - deliveryFee;
+
+      if (!withStripeFee) restaurantAmount -= stripeFee;
+
+      console.log(`Monto original del charge: ${amount}`);
+      console.log(`Comisión para plataforma: ${platformFee}`);
+      console.log(`Comisión para repartidor: ${deliveryFee}`);
+      console.log(`Comisión para Stripe: ${stripeFee}`);
+      console.log(`Monto para el restaurante: ${restaurantAmount}`);
+
+      // Transferencia para el restaurante
+      await stripe.transfers.create({
+        amount: restaurantAmount,
+        currency: 'mxn',
+        destination: "acct_1QFHwyD5KLGk800D", // Toks
+        source_transaction: chargeId as string,
+        transfer_group: `group_${session.id}`,
+      });
+
+      // Transferencia para el repartidor
+      await stripe.transfers.create({
+        amount: deliveryFee,
+        currency: 'mxn',
+        destination: "acct_1QF7PLRiGCLkNX6A", // Repartidor?
+        source_transaction: chargeId as string,
+        transfer_group: `group_${session.id}`,
+      });
+
+      console.log(`Transferencias realizadas exitosamente para la sesión ${session.id}`);
     }
 
     return NextResponse.json({ received: true }, { status: 200 });
