@@ -24,11 +24,11 @@ export async function POST(req: NextRequest) {
       const session = event.data.object;
       const sessionId = session.id;
   
-      // const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
-      // if (!order) {
-      //   throw new Error('No se encontró la orden');
-      // }
-      // await OrderRepository.updateOne(order._id!, { status: 'paid' });
+      const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
+      if (!order) {
+        throw new Error('No se encontró la orden');
+      }
+      await OrderRepository.updateOne(order._id!, { status: 'paid' });
   
       const shippingAmount = session.metadata?.shippingAmount || 0;
       console.log(`Monto de envío: ${shippingAmount}`);
