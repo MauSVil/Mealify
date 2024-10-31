@@ -100,6 +100,9 @@ export const POST = async (req: NextRequest) => {
       mode: 'payment',
       success_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/success`,
       cancel_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/cancel`,
+      metadata: {
+        shippingAmount: shippingCost,
+      },
     });
 
     await ky.post(`${req.headers.get('origin')}/api/user/orders`, { json: {
