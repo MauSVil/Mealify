@@ -12,9 +12,6 @@ const stripeComission = 4;
 const deliveryPerson = 5;
 const myComission = 10;
 
-const initialCommission = 19;
-const commission = myComission + stripeComission + deliveryPerson;
-
 export const POST = async (req: NextRequest) => {
   try {
     const token = await validateIfToken(req, 'utoken');
@@ -66,8 +63,7 @@ export const POST = async (req: NextRequest) => {
       };
     });
 
-    const commissionAmount = Math.round(subtotal * (commission / 100));
-    const initialCommissionAmount = Math.round(subtotal * (initialCommission / 100));
+    const shippingCost = Math.round(Number(eta.shippingCost) * 100);
 
     lineItems.push({
       price_data: {
@@ -76,10 +72,15 @@ export const POST = async (req: NextRequest) => {
           name: 'Gastos de envío',
           images: [],
         },
-        unit_amount: Math.floor(Number(eta.shippingCost) * 100),
+        unit_amount: shippingCost,
       },
       quantity: 1,
     });
+
+    const platformCommission = Math.round(subtotal * (myComission / 100));
+    const stripeFee = Math.round(subtotal * (stripeComission / 100));
+    const deliveryFee = Math.round(subtotal * (deliveryPerson / 100));
+    const totalCommission = platformCommission + stripeFee + deliveryFee;
 
     lineItems.push({
       price_data: {
@@ -88,7 +89,7 @@ export const POST = async (req: NextRequest) => {
           name: 'Comision',
           images: [],
         },
-        unit_amount: initialCommissionAmount,
+        unit_amount: totalCommission,
       },
       quantity: 1,
     });
@@ -99,12 +100,6 @@ export const POST = async (req: NextRequest) => {
       mode: 'payment',
       success_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/success`,
       cancel_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/cancel`,
-      payment_intent_data: {
-        application_fee_amount: commissionAmount,
-        transfer_data: {
-          destination: business.stripeAccountId || '',
-        },
-      },
     });
 
     await ky.post(`${req.headers.get('origin')}/api/user/orders`, { json: {

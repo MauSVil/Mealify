@@ -28,6 +28,26 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'No se encontró la orden' }, { status: 400 });
       }
       await OrderRepository.updateOne(order._id!, { status: 'paid' });
+
+      const shippingAmount = session?.metadata?.shippingAmount || 0;
+      const paymentIntentId = session.payment_intent;
+
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId as string);
+      const chargeId = paymentIntent.latest_charge;
+
+      const charge = await stripe.charges.retrieve(chargeId as string);
+      const balanceTransactionId = charge.balance_transaction;
+      const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string);
+
+      const netAmount = balanceTransaction.net;
+
+      console.log(netAmount, 'netAmount');
+
+      const platformFee = Math.round(netAmount * 0.10);
+      const deliveryFee = Math.round(netAmount * 0.05);
+      const restaurantAmount = netAmount - platformFee - deliveryFee;
+
+      console.log(platformFee, deliveryFee, restaurantAmount);
     }
 
     return NextResponse.json({ received: true }, { status: 200 });
