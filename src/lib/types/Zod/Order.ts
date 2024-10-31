@@ -14,6 +14,9 @@ export const OrderSchema = z.object({
   checkoutSessionId: z.string().default(''),
   paymentIntentId: z.string().default(''),
   shippingAmount: z.number().default(0),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  deletedAt: z.coerce.date().optional().nullable(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;
@@ -22,6 +25,7 @@ export const OrderRepositoryFilterModel = z.object({
   id: z.string().optional(),
   checkoutSessionId: z.string().optional(),
   paymentIntentId: z.string().optional(),
+  user: z.string().optional(),
 });
 
 export type OrderRepositoryFilter = z.infer<typeof OrderRepositoryFilterModel>;

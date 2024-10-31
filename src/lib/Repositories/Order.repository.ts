@@ -18,6 +18,7 @@ export class OrderRepository {
     const { id, ...rest } = filters;
     const order = await db.collection('orders').findOne<Order>({
       ...(id ? { _id: new ObjectId(id) } : {}),
+      status: 'paid',
       ...rest
     });
     return order;
@@ -26,13 +27,19 @@ export class OrderRepository {
   static async find(filter: OrderRepositoryFilter = {}): Promise<Order[]> {
     await init();
     const filters = await OrderRepositoryFilterModel.parse(filter);
-    const orders = await db.collection('orders').find<Order>(filters).toArray();
+    const orders = await db.collection('orders').find<Order>({
+      ...filters,
+      status: 'paid',
+    }, { sort: { createdAt: -1 } }).toArray();
     return orders;
   }
 
   static async insertOne(order: Order): Promise<string> {
     await init();
     const { _id, ...rest } = order;
+    order.createdAt = new Date();
+    order.updatedAt = new Date();
+    order.deletedAt = null;
     const insertedId =(await db.collection('orders').insertOne({ ...rest })).insertedId;
     return insertedId.toString();
   }
