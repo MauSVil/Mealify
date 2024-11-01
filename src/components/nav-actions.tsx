@@ -14,10 +14,12 @@ import { Label } from "./ui/label"
 import Image from "next/image"
 import ky from "ky";
 import { Separator } from "./ui/separator";
+import { useCheckoutSheet } from "@/hooks/useCheckoutSheet";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export function NavActions() {
+  const { isOpenCheckoutSheet, openCheckoutSheet, closeCheckoutSheet } = useCheckoutSheet();
   const { cart, removeFromCart } = useCart();
 
   const productsTotal = React.useMemo(() => {
@@ -54,7 +56,16 @@ export function NavActions() {
   return (
     <div className="flex items-center gap-2 text-sm">
       <Input placeholder="Busca un restaurante..." className="h-7" />
-      <Sheet>
+      <Sheet
+        open={isOpenCheckoutSheet}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeCheckoutSheet()
+            return;
+          }
+          openCheckoutSheet()
+        }}
+      >
         <SheetTrigger asChild>
           <div className="relative flex items-center justify-center rounded-lg text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8 cursor-pointer">
             <ShoppingCartIcon className="h-5 w-5" />

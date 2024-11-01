@@ -20,7 +20,7 @@ export default function Page() {
   const businesses = useMemo(() => businessQuery.data || [], [businessQuery.data]);
   const mappedBusinesses = useMemo(() => {
     return _.keyBy(businesses, '_id');
-  }, [businessQuery.data]);
+  }, [businesses]);
 
   const router = useRouter();
 
@@ -67,6 +67,9 @@ export default function Page() {
                     <h1 className="text-xl font-bold">
                       {`Tienes una orden activa de ${mappedBusinesses[orders[0]?.restaurant]?.name}`}
                     </h1>
+                    <p>
+                      {`Estado de la orden: ${orders[0]?.status}`}
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       {`Creada el 01/01/2023`}
                     </p>

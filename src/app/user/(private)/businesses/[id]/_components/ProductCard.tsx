@@ -3,7 +3,7 @@ import { useCart } from "@/hooks/useCart";
 import { Product } from "@/lib/types/Zod/Product"
 import Image from "next/image"
 
-export const ProductCard = ({ product }: { product: Product }) => {
+export const ProductCard = ({ product, openCheckoutSheet }: { product: Product, openCheckoutSheet: () => void }) => {
   const { addToCart } = useCart();
 
   return (
@@ -28,7 +28,10 @@ export const ProductCard = ({ product }: { product: Product }) => {
         />
         <Button
           className="absolute bottom-2 right-2 h-8 w-8 rounded-full"
-          onClick={() => addToCart(product)}
+          onClick={() => {
+            addToCart(product)
+            openCheckoutSheet()
+          }}
         >
           +
         </Button>
