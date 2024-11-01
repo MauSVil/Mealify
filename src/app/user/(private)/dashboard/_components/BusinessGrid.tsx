@@ -1,51 +1,23 @@
 "use client"
 
-import { use, useEffect, useMemo, useState } from "react";
-import { useBusinesses } from "../_hooks/useBusinesses";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import BusinessGridLoading from "./BusinessGridLoading";
+import { Business } from "@/lib/types/Zod/Business";
+import { useBusinesses } from "../_hooks/useBusinesses";
 
-const BusinessGrid = () => {
-  const [latitude, setLatitude] = useState<number | undefined>(undefined);
-  const [longitude, setLongitude] = useState<number | undefined>(undefined);
-  const businessQuery = useBusinesses(latitude, longitude);
-  const businesses = useMemo(() => businessQuery.data || [], [businessQuery.data]);
+interface Props {
+  businesses: Business[];
+  businessQuery: ReturnType<typeof useBusinesses>;
+}
 
+const BusinessGrid = (props: Props) => {
+  const { businesses, businessQuery } = props;
   const router = useRouter();
 
   const handleBusinessClick = (id: string) => {
     router.push(`/user/businesses/${id}`)
   }
-
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLatitude(latitude);
-          setLongitude(longitude);
-        },
-        (err) => {
-          toast.error("Error al buscar restaurantes");
-        }
-      );
-    } else {
-      toast.error("Debes habilitar la geolocalización para poder buscar restaurantes");
-    }
-  };
-
-  useEffect(() => {
-    getLocation();
-  }, []);
-
-  useEffect(() => {
-    if (latitude && longitude) {
-      businessQuery.refetch();
-    }
-  }, [latitude, longitude]);
-
 
   if (businessQuery.isLoading || businessQuery.isFetching || businesses.length === 0) {
     return <BusinessGridLoading />

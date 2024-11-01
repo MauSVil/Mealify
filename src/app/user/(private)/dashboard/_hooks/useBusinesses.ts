@@ -16,6 +16,3 @@ export const useBusinesses = (lat: number | undefined, long: number | undefined)
     enabled: !!lat && !!long,
   });
 }
-
-// "latitude": 19.505450,
-//         "longitude": -99.247842
