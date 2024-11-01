@@ -65,7 +65,7 @@ export default function Page() {
                 <div className="flex justify-between items-center">
                   <div className="flex flex-col gap-1">
                     <h1 className="text-xl font-bold">
-                      {`Tienes una orden activa de ${mappedBusinesses[orders[0].restaurant].name}`}
+                      {`Tienes una orden activa de ${mappedBusinesses[orders[0]?.restaurant]?.name}`}
                     </h1>
                     <p className="text-sm text-muted-foreground">
                       {`Creada el 01/01/2023`}
