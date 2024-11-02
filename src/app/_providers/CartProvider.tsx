@@ -3,9 +3,11 @@ import { CartContext } from "../providers";
 import { Product, ProductCart } from "@/lib/types/Zod/Product";
 import _ from "lodash";
 import { toast } from "sonner";
+import { useCheckoutSheet } from "@/hooks/useCheckoutSheet";
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<{[id: string]: ProductCart}>({});
+  const { openCheckoutSheet } = useCheckoutSheet();
 
   const addToCart = (item: Product) => {
     const cartItems = Object.keys(cart).map((key) => cart[key]);
@@ -33,6 +35,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           ...newItem,
         };
       });
+      openCheckoutSheet();
     } else {
       if (restaurantIds.includes(item.restaurantId)) {
         const newItem = {
@@ -56,6 +59,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             ...newItem,
           };
         });
+        openCheckoutSheet();
       } else {
         toast.error("El producto pertenece a otro restaurante");
       }

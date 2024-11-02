@@ -15,6 +15,10 @@ export default function Page() {
 
   const ordersQuery = useOrders();
   const orders = useMemo(() => ordersQuery.data || [], [ordersQuery.data]);
+  const order = useMemo(() => orders[0] || {}, [orders]);
+
+  const totalQuantity = useMemo(() => (order.products || []).reduce((acc, product) => acc + product.quantity, 0), [order.products]);
+  const totalProducts = useMemo(() => (order.products || []).reduce((acc, product) => acc + product.price * product.quantity, 0), [order.products]);
 
   const businessQuery = useBusinesses(latitude, longitude);
   const businesses = useMemo(() => businessQuery.data || [], [businessQuery.data]);
@@ -60,20 +64,20 @@ export default function Page() {
       {
         !ordersQuery.isFetching && !businessQuery.isFetching && orders.length > 0 && (
           <div className="grid grid-cols-1 gap-4">
-            <div className="border-primary min-h-[60px] p-4 border-[1px] rounded-md">
+            <div className="border-[#ea580cba] px-10 min-h-[60px] p-4 border-[1px] rounded-md">
               <div>
-                <div className="flex justify-between items-center">
-                  <div className="flex flex-col gap-1">
+                <div className="grid grid-cols-1 justify-between items-center md:grid-cols-3 gap-4">
+                  <div className="flex flex-col gap-1 justify-start">
                     <h1 className="text-xl font-bold">
-                      {`Tienes una orden activa de ${mappedBusinesses[orders[0]?.restaurant]?.name}`}
+                      {mappedBusinesses[order.restaurant]?.name}
                     </h1>
                     <p>
-                      {`Estado de la orden: ${orders[0]?.status}`}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {`Creada el 01/01/2023`}
+                      {`Estado • ${order.status}`}
                     </p>
                   </div>
+                  <p className="text-sm text-muted-foreground">
+                    {`${totalQuantity} producto(s) • $${totalProducts}`}
+                  </p>
                   <Button variant="outline" size={"sm"} onClick={handleSeeDetails}>
                     Ver detalles
                   </Button>

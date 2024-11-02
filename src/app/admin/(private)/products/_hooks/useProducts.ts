@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import ky, { HTTPError } from "ky";
 import { Product } from "@/lib/types/Zod/Product";
-import { toast } from "sonner";
 
 export const useProducts = () => {
   return useQuery<Product[], HTTPError>({
@@ -13,9 +12,5 @@ export const useProducts = () => {
       return resp.data || [];
     },
     refetchOnWindowFocus: false,
-    // onError: async (error: HTTPError) => {
-    //   const errorBody = await error.response.json<{ error?: string }>();
-    //   toast.error(errorBody.error || error.message);
-    // },
   });
 };

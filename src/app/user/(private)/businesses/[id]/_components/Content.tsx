@@ -9,7 +9,6 @@ import { ProductCard } from "./ProductCard";
 import { useClient } from "../_hooks/useClient";
 import { Business } from "@/lib/types/Zod/Business";
 import BusinessIdContentLoading from "./BusinessIdContentLoading";
-import { useCheckoutSheet } from "@/hooks/useCheckoutSheet";
 
 interface Props {
   id: string
@@ -22,7 +21,6 @@ const BusinessIdContent = (props: Props) => {
   const clientQuery = useClient(props.id);
   const client = useMemo(() => clientQuery.data || {}, [clientQuery.data]) as Business;
 
-  const { openCheckoutSheet } = useCheckoutSheet();
 
   if (clientQuery.isLoading || clientQuery.isFetching || productsQuery.isLoading || productsQuery.isFetching) {
     return <BusinessIdContentLoading />
@@ -53,7 +51,7 @@ const BusinessIdContent = (props: Props) => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
         {
           products.map((product) => (
-            <ProductCard key={product._id} product={product} openCheckoutSheet={openCheckoutSheet} />
+            <ProductCard key={product._id} product={product} />
           ))
         }
       </div>

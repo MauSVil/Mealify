@@ -12,7 +12,8 @@ export const useCreateProduct = () => {
     mutationFn: async (values) => {
       const formData = new FormData();
       const { image, ...rest } = values;
-      formData.append('heroImage', image);
+
+      formData.append('image', image);
       formData.append('data', JSON.stringify(rest));
   
       const resp = await ky.post("/api/admin/products", { body: formData }).json() as { data: Product, error?: string };
