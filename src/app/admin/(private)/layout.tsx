@@ -44,6 +44,7 @@ const PrivateAdminLayout = (props: Props) => {
     Cookies.set('business', value);
     router.refresh();
     setSelectedBusiness(value);
+    window.location.reload();
   };
 
   useEffect(() => {
