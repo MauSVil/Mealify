@@ -8,9 +8,8 @@ import { useProducts } from "./_hooks/useProducts";
 import { Product } from "@/lib/types/Zod/Product";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { XCircle } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
+import { useEditProduct } from "./_hooks/useEditProduct";
 
 const ProductsPage = () => {
   const router = useRouter();
@@ -25,6 +24,8 @@ const ProductsPage = () => {
 
   const productsQuery = useProducts();
   const data = useMemo(() => productsQuery.data || [], [productsQuery.data]);
+
+  const editProductMutation = useEditProduct();
 
   const columns: ColumnDef<Product>[] = useMemo(
     () =>
@@ -63,8 +64,12 @@ const ProductsPage = () => {
             return (
               <Switch
                 checked={cell.getValue() as boolean}
-                onCheckedChange={(value) => {
-                  console.log(value);
+                onCheckedChange={async (value) => {
+                  await editProductMutation.mutateAsync({
+                    ...cell.row.original,
+                    available: value,
+                  });
+                  productsQuery.refetch();
                 }}
               />
             )

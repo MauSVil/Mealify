@@ -24,7 +24,8 @@ export const POST = async (req: NextRequest) => {
     const token = jwt.sign({
       id: user._id,
       email: user.email,
-      role: user.role
+      role: user.role,
+      stripeAccountId: user.stripeAccountId
     }, process.env.JWT_SECRET!, { expiresIn: '1d' });
 
     cookies().set('atoken', token);

@@ -47,3 +47,27 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: 'Error [CreateProductAdmin]' }, { status: 400 });
   }
 };
+
+export const PUT = async (req: NextRequest) => {
+  try {
+    await validateIfToken(req, 'atoken');
+    await validateIfBusiness(req);
+    const body = await req.json();
+
+    if (!body._id) {
+      return NextResponse.json({ error: 'Id not found' }, { status: 400 });
+    }
+
+    const bodyCopy = { ...body };
+    delete bodyCopy._id;
+
+    await ProductsRepository.updateOne(body._id, bodyCopy);
+    return NextResponse.json({ data: body, error: '' });
+  } catch (e) {
+    console.log(e);
+    if (e instanceof Error) {
+      return NextResponse.json({ error: e.message }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Error [CreateProductAdmin]' }, { status: 400 });
+  }
+};

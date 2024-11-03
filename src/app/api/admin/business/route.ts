@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
 import { uploadFile } from "@/lib/services/minio/uploadFile";
 import { validateIfToken } from "@/lib/utils";
+import { UsersRepository } from "@/lib/Repositories/User.repository";
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -12,6 +13,13 @@ export const POST = async (req: NextRequest) => {
     const body = await formData.get('data');
     const myParsedBody = await JSON.parse(body as string);
     const heroImage = await formData.get('heroImage');
+
+    const tokenData = await jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+    const user = await UsersRepository.findOne({ id: tokenData.id });
+
+    if (!user) throw new Error('El usuario no existe');
+
+    if (!user.onboardingFinished) throw new Error('El usuario no ha completado el onboarding');
 
     if (!heroImage || typeof heroImage === 'string') {
       return NextResponse.json({ error: 'El archivo heroImage no es válido' }, { status: 400 });
@@ -38,7 +46,6 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ data: parsedBody, error: '' });
   } catch (e) {
-    console.log(e);
     if (e instanceof Error) {
       return NextResponse.json({ error: e.message }, { status: 400 });
     }

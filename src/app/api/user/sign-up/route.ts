@@ -15,7 +15,15 @@ export const POST = async (req: NextRequest) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await UsersRepository.insertOne({ email, password: hashedPassword, role: 'user', createdAt: new Date(), updatedAt: new Date() });
+    await UsersRepository.insertOne({
+      email,
+      password: hashedPassword,
+      role: 'user',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      stripeAccountId: null,
+      onboardingFinished: false,
+    });
     return NextResponse.json({ message: 'Usuario registrado correctamente' });
   } catch (e) {
     console.error('Error signing up', e);

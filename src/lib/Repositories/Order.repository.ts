@@ -18,7 +18,6 @@ export class OrderRepository {
     const { id, ...rest } = filters;
     const order = await db.collection('orders').findOne<Order>({
       ...(id ? { _id: new ObjectId(id) } : {}),
-      status: 'paid',
       ...rest
     });
     return order;
@@ -29,7 +28,6 @@ export class OrderRepository {
     const filters = await OrderRepositoryFilterModel.parse(filter);
     const orders = await db.collection('orders').find<Order>({
       ...filters,
-      status: 'paid',
     }, { sort: { createdAt: -1 } }).toArray();
     return orders;
   }

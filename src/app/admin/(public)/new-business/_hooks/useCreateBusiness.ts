@@ -1,6 +1,6 @@
 import { SerializedError } from "@/lib/types/SerializedError";
 import { Business } from "@/lib/types/Zod/Business";
-import ky from "ky";
+import ky, { HTTPError } from "ky";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -27,8 +27,29 @@ export const useCreateBusiness = () => {
       timeout(1000);
       router.push(`/admin/business/${data?._id}`);
     },
-    onError: (error) => {
-      toast.error(error.message);
+    onError: async (error) => {
+      if (error instanceof HTTPError) {
+        const errorBody = await error.response.json<{ error?: string }>();
+        if (errorBody.error === 'El usuario no ha completado el onboarding') {
+          toast('No se ha completado el onboarding', {
+            duration: 10000,
+            icon: '🚨',
+            action: {
+              label: 'Volver a onboarding',
+              onClick: async () => {
+                try {
+                  const resp = await ky.post('/api/admin/edit-onboarding').json() as { data: string, error?: string };
+                  window.location.href = resp.data;
+                } catch (e) {
+                  console.error(e);
+                }
+              },
+            }
+          })
+        }
+        return;
+      }
+      toast.error('Error al crear el business');
     },
   });
 };

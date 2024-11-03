@@ -7,6 +7,8 @@ export const UserSchema = z.object({
   role: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
+  stripeAccountId: z.string().nullable(),
+  onboardingFinished: z.boolean().default(false),
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -14,6 +16,8 @@ export type User = z.infer<typeof UserSchema>;
 export const UserRepositoryFilterModel = z.object({
   email: z.string().optional(),
   role: z.enum(['admin', 'user']).optional(),
+  id: z.string().optional(),
+  stripeAccountId: z.string().optional(),
 });
 
 export type UserRepositoryFilter = z.infer<typeof UserRepositoryFilterModel>;

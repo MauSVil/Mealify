@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { OrderRepository } from '@/lib/Repositories/Order.repository';
 import { BusinessRepository } from '@/lib/Repositories/Business.repository';
+import { UsersRepository } from '@/lib/Repositories/User.repository';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -46,48 +47,55 @@ export async function POST(req: NextRequest) {
     
       const balanceTransactionId = charge.balance_transaction;
     
-      if (balanceTransactionId) {
-        const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string);
-        const netAmount = balanceTransaction.net;
+      const balanceTransaction = await stripe.balanceTransactions.retrieve(balanceTransactionId as string);
+      const netAmount = balanceTransaction.net;
 
-        const order = await OrderRepository.findOne({ paymentIntentId: paymentIntentId?.toString() });
-        if (!order) throw new Error('No se encontró la orden para este paymentIntent');
-        const business = await BusinessRepository.findOne({ id: order.restaurant });
-        if (!business) throw new Error('No se encontró el restaurante para esta orden');
+      const order = await OrderRepository.findOne({ paymentIntentId: paymentIntentId?.toString() });
+      if (!order) throw new Error('No se encontró la orden para este paymentIntent');
+      const business = await BusinessRepository.findOne({ id: order.restaurant });
+      const admin = await UsersRepository.findOne({ id: business?.owner });
 
-        const { checkoutSessionId, shippingAmount } = order;
-    
-        const platformFee = Math.round(netAmount * 0.10);
-        const deliveryFee = Math.round(netAmount * 0.05);
-        const restaurantAmount = netAmount - platformFee - deliveryFee;
-    
-        console.log('*********************');
-        console.log(`Monto neto después de comisiones: ${netAmount}`);
-        console.log(`Comisión para plataforma: ${platformFee}`);
-        console.log(`Comisión para repartidor: ${deliveryFee}`);
-        console.log(`Monto para el restaurante: ${restaurantAmount}`);
-        console.log('*********************');
+      if (!admin) throw new Error('No se encontró el restaurante para esta orden');
+      if (!admin.onboardingFinished) throw new Error('El usuario no ha completado el proceso de onboarding');
 
-        // Transferencia para el restaurante
-        await stripe.transfers.create({
-          amount: restaurantAmount,
-          currency: 'mxn',
-          destination: business.stripeAccountId as string,
-          source_transaction: chargeId as string,
-          transfer_group: `group_${checkoutSessionId}`,
-        });
+      const { checkoutSessionId } = order;
+  
+      const platformFee = Math.round(netAmount * 0.10);
+      const deliveryFee = Math.round(netAmount * 0.05);
+      const restaurantAmount = netAmount - platformFee - deliveryFee;
+  
+      console.log('*********************');
+      console.log(`Monto neto después de comisiones: ${netAmount}`);
+      console.log(`Comisión para plataforma: ${platformFee}`);
+      console.log(`Comisión para repartidor: ${deliveryFee}`);
+      console.log(`Monto para el restaurante: ${restaurantAmount}`);
+      console.log('*********************');
 
-        // Transferencia para el repartidor
-        await stripe.transfers.create({
-          amount: deliveryFee,
-          currency: 'mxn',
-          destination: "acct_1QF7PLRiGCLkNX6A", // Repartidor?
-          source_transaction: chargeId as string,
-          transfer_group: `group_${checkoutSessionId}`,
-        });
+      // Transferencia para el restaurante
+      await stripe.transfers.create({
+        amount: restaurantAmount,
+        currency: 'mxn',
+        destination: admin.stripeAccountId as string,
+        source_transaction: chargeId as string,
+        transfer_group: `group_${checkoutSessionId}`,
+      });
 
-      } else {
-        console.error('No se encontró el balance_transaction en el evento charge.updated.');
+      // Transferencia para el repartidor
+      // await stripe.transfers.create({
+      //   amount: deliveryFee,
+      //   currency: 'mxn',
+      //   destination: "acct_1QF7PLRiGCLkNX6A", // Repartidor?
+      //   source_transaction: chargeId as string,
+      //   transfer_group: `group_${checkoutSessionId}`,
+      // });
+    }
+
+    if (event.type === 'account.updated') {
+      const account = event.data.object;
+      if (account.details_submitted) {
+        const user = await UsersRepository.findOne({ stripeAccountId: account.id });
+        if (!user) throw new Error('No se encontró el usuario asociado a la cuenta');
+        await UsersRepository.updateOne(user._id!, { onboardingFinished: true });
       }
     }
 
