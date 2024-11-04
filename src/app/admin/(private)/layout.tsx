@@ -20,7 +20,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useClients } from "./_hooks/useClients";
-import { use, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Business } from "@/lib/types/Zod/Business";
 import Cookies from "js-cookie";
 
@@ -94,6 +94,7 @@ const PrivateAdminLayout = (props: Props) => {
             className={cn("cursor-pointer text-muted-foreground transition-colors hover:text-foreground", {
               "text-foreground": currentPath === "orders"
             })}
+            onClick={() => router.push('/admin/orders')}
           >
             Orders
           </p>

@@ -25,9 +25,14 @@ export async function POST(req: NextRequest) {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const sessionId = session.id;
-      const paymentIntentId = session.payment_intent;
+      const paymentIntentId = session.payment_intent as string;
       const shippingAmount = session.metadata?.shippingAmount || 0;
-  
+
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      const latestChage = paymentIntent.latest_charge?.toString();
+      const charge = await stripe.charges.retrieve(latestChage!);
+      const receiptUrl = charge.receipt_url as string;
+
       const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
       if (!order) {
         throw new Error('No se encontró la orden');
@@ -37,6 +42,7 @@ export async function POST(req: NextRequest) {
         paymentIntentId: paymentIntentId?.toString(),
         checkoutSessionId: sessionId,
         shippingAmount: Number(shippingAmount),
+        receiptUrl
       });
     }
 

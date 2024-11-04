@@ -17,6 +17,7 @@ export const OrderSchema = z.object({
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   deletedAt: z.coerce.date().optional().nullable(),
+  receiptUrl: z.string().optional(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;
@@ -26,6 +27,8 @@ export const OrderRepositoryFilterModel = z.object({
   checkoutSessionId: z.string().optional(),
   paymentIntentId: z.string().optional(),
   user: z.string().optional(),
+  restaurant: z.string().optional(),
+  status: z.enum(['pending', 'paid', 'canceled']).optional(),
 });
 
 export type OrderRepositoryFilter = z.infer<typeof OrderRepositoryFilterModel>;

@@ -120,6 +120,7 @@ export const POST = async (req: NextRequest) => {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
+      locale: 'es',
       success_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/${insertedId}`,
       cancel_url: `${req.headers.get('origin') || 'http://localhost:3000'}/user/orders/cancel`,
       metadata: {

@@ -35,9 +35,9 @@ export class OrderRepository {
   static async insertOne(order: Order): Promise<string> {
     await init();
     const { _id, ...rest } = order;
-    order.createdAt = new Date();
-    order.updatedAt = new Date();
-    order.deletedAt = null;
+    rest.createdAt = new Date();
+    rest.updatedAt = new Date();
+    rest.deletedAt = null;
     const insertedId =(await db.collection('orders').insertOne({ ...rest })).insertedId;
     return insertedId.toString();
   }
