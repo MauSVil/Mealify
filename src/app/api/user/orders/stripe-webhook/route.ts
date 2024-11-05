@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
         paymentIntentId: paymentIntentId?.toString(),
         checkoutSessionId: sessionId,
         shippingAmount: Number(shippingAmount),
-        receiptUrl
+        receiptUrl,
+        deliveryStatus: 'in-process',
       });
     }
 

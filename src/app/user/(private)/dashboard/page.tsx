@@ -61,7 +61,7 @@ export default function Page() {
 
   return (
     <div className="flex flex-col gap-4">
-      {
+      {/* {
         !ordersQuery.isFetching && !businessQuery.isFetching && orders.length > 0 && (
           <div className="grid grid-cols-1 gap-4">
             <div className="border-[#ea580cba] px-10 min-h-[60px] p-4 border-[1px] rounded-md">
@@ -86,7 +86,7 @@ export default function Page() {
             </div>
           </div>
         )
-      }
+      } */}
       <BusinessGrid businesses={businesses} businessQuery={businessQuery} />
     </div>
   )

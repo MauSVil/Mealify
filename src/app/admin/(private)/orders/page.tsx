@@ -9,6 +9,12 @@ import DataTableColumnHeader from "@/components/Datatable/DataTableHeader";
 import { Button } from "@/components/ui/button";
 import moment from "moment";
 
+const translatedStatuses: Record<string, string> = {
+  'in-process': 'En proceso',
+  'on-way': 'En camino',
+  'delivered': 'Entregado',
+}
+
 const AdminOrdersPage = () => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -36,6 +42,18 @@ const AdminOrdersPage = () => {
             }
             return '';
           },
+          enableGlobalFilter: true,
+          enableSorting: true,
+          filterFn: "auto",
+          enableColumnFilter: true,
+          sortingFn: "textCaseSensitive",
+        },
+        {
+          id: 'Estatus',
+          header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Estatus" />
+          ),
+          accessorFn: (row) => translatedStatuses[row.deliveryStatus as string],
           enableGlobalFilter: true,
           enableSorting: true,
           filterFn: "auto",

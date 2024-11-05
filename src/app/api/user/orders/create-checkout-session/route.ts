@@ -112,6 +112,9 @@ export const POST = async (req: NextRequest) => {
       checkoutSessionId: '',
       paymentIntentId: '',
       shippingAmount: shippingCost,
+      userLat,
+      userLon,
+      deliveryStatus: null,
     }
 
     const insertedId = await OrderRepository.insertOne(orderToAdd);

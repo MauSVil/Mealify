@@ -9,6 +9,7 @@ export const UserSchema = z.object({
   updatedAt: z.coerce.date(),
   stripeAccountId: z.string().nullable(),
   onboardingFinished: z.boolean().default(false),
+  customerId: z.string().optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;

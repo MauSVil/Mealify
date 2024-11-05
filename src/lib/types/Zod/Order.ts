@@ -18,6 +18,9 @@ export const OrderSchema = z.object({
   updatedAt: z.coerce.date().optional(),
   deletedAt: z.coerce.date().optional().nullable(),
   receiptUrl: z.string().optional(),
+  userLon: z.number(),
+  userLat: z.number(),
+  deliveryStatus : z.enum(['in-process', 'on-way', 'delivered']).nullable(),
 });
 
 export type Order = z.infer<typeof OrderSchema>;

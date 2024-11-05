@@ -16,7 +16,7 @@ const defaultValues: NewProduct = {
   name: "",
   description: "",
   price: 0,
-  available: false,
+  available: true,
   image: "",
 };
 
@@ -41,7 +41,7 @@ const NewProductPage = () => {
     <div className="w-full flex p-4 md:gap-8 md:p-8 items-center justify-center">
       <div className="w-full flex gap-4 flex-1 max-w-5xl">
         <Card className="flex-1">
-          <CardTitle className="px-8 py-4">New Product</CardTitle>
+          <CardTitle className="px-8 py-4">Nuevo producto</CardTitle>
           <CardContent>
             <Form {...form}>
               <form
@@ -53,7 +53,7 @@ const NewProductPage = () => {
                     control: form.control,
                     name: "name",
                   }}
-                  label="Name"
+                  label="Nombre"
                   type="text"
                   required
                 />
@@ -63,7 +63,7 @@ const NewProductPage = () => {
                     control: form.control,
                     name: "description",
                   }}
-                  label="Description"
+                  label="Descripción"
                   type="text"
                   required
                 />
@@ -73,7 +73,7 @@ const NewProductPage = () => {
                     control: form.control,
                     name: "price",
                   }}
-                  label="Price"
+                  label="Precio"
                   type="number"
                   required
                 />
@@ -83,7 +83,7 @@ const NewProductPage = () => {
                     control: form.control,
                     name: "available",
                   }}
-                  label="Active"
+                  label="Esta disponible?"
                 />
 
                 <InputFormField
@@ -91,7 +91,7 @@ const NewProductPage = () => {
                     control: form.control,
                     name: "image",
                   }}
-                  label="Image"
+                  label="Imagen"
                   type="file"
                   required
                 />

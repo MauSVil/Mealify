@@ -15,7 +15,7 @@ export const useSignIn = () => {
       toast.success('Se ha iniciado sesión correctamente')
       setTimeout(() => {
         router.push("/admin/dashboard")
-      }, 1000)
+      }, 1500)
     },
     onError: () => {
       toast.error("Error al iniciar sesión")
