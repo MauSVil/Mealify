@@ -9,8 +9,8 @@ export const BusinessSchema = z.object({
   heroImage: z.any(),
   latitude: z.number(),
   longitude: z.number(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  createdAt: z.coerce.date().nullable(),
+  updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),
 });
 
