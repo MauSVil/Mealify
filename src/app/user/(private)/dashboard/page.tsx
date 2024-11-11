@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useBusinesses } from "./_hooks/useBusinesses";
 import { toast } from "sonner";
 import _ from "lodash";
+import BusinessCarrousel from "./_components/BusinessCarrousel";
 
 export default function Page() {
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
@@ -60,7 +61,7 @@ export default function Page() {
   }, [latitude, longitude]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="relative">
       {/* {
         !ordersQuery.isFetching && !businessQuery.isFetching && orders.length > 0 && (
           <div className="grid grid-cols-1 gap-4">
@@ -87,7 +88,10 @@ export default function Page() {
           </div>
         )
       } */}
-      <BusinessGrid businesses={businesses} businessQuery={businessQuery} />
+      {/* <BusinessGrid businesses={businesses} businessQuery={businessQuery} /> */}
+      <div className="flex flex-col gap-4">
+        <BusinessCarrousel businesses={businesses} />
+      </div>
     </div>
   )
 }
