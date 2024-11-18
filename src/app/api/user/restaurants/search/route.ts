@@ -4,12 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { latitude, longitude } = await req.json();
+    const { latitude, longitude, selectedCategory } = await req.json();
     if (!latitude || !longitude) {
       return NextResponse.json({ error: 'Latitude and longitude are required' }, { status: 400 });
     }
 
-    const businesses = await BusinessRepository.find({});
+    const businesses = await BusinessRepository.find({ category: selectedCategory });
     const nearbyRestaurants = findNearbyRestaurants(latitude, longitude, businesses, 5);
     return NextResponse.json({ data: nearbyRestaurants });
   } catch (e) {

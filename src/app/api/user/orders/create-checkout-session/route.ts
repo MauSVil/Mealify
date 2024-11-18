@@ -11,7 +11,6 @@ import { Order } from "@/lib/types/Zod/Order";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const stripeComission = 7;
-const deliveryPerson = 5;
 const myComission = 10;
 
 export const POST = async (req: NextRequest) => {
@@ -21,10 +20,11 @@ export const POST = async (req: NextRequest) => {
     const user = await jwt.verify(token, process.env.USER_JWT_SECRET!) as { id: string };
 
     const body = await req.json();
-    const { products, userLon, userLat } = body as {
+    const { products, userLon, userLat, deliveryPersonComission = 5 } = body as {
       products: { [id: string]: ProductCart },
       userLon: number,
       userLat: number,
+      deliveryPersonComission?: number,
     };
     if (!products || Object.keys(products).length === 0) {
       return NextResponse.json({ error: 'No hay productos' }, { status: 400 });
@@ -81,8 +81,20 @@ export const POST = async (req: NextRequest) => {
 
     const platformCommission = Math.round(subtotal * (myComission / 100));
     const stripeFee = Math.round(subtotal * (stripeComission / 100));
-    const deliveryFee = Math.round(subtotal * (deliveryPerson / 100));
-    const totalCommission = platformCommission + stripeFee + deliveryFee;
+    const deliveryFee = Math.round(subtotal * (deliveryPersonComission / 100));
+    const totalCommission = platformCommission + stripeFee;
+
+    lineItems.push({
+      price_data: {
+        currency: 'mxn',
+        product_data: {
+          name: 'Propina del repartidor',
+          images: [],
+        },
+        unit_amount: deliveryFee,
+      },
+      quantity: 1,
+    })
 
     lineItems.push({
       price_data: {
@@ -115,6 +127,7 @@ export const POST = async (req: NextRequest) => {
       userLat,
       userLon,
       deliveryStatus: null,
+      deliveryPersonComission,
     }
 
     const insertedId = await OrderRepository.insertOne(orderToAdd);

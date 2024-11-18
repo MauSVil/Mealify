@@ -25,8 +25,12 @@ export class BusinessRepository {
 
   static async find(filter: BusinessRepositoryFilter = {}): Promise<Business[]> {
     await init();
-    const filters = await BusinessRepositoryFilterModel.parse(filter);
-    const businesses = await db.collection('businesses').find<Business>(filters).toArray();
+    const { category, ...filters } = await BusinessRepositoryFilterModel.parse(filter);
+    const filterQuery = {
+      ...filters,
+      ...(category ? { category } : {}),
+    }
+    const businesses = await db.collection('businesses').find<Business>(filterQuery).toArray();
     return businesses;
   }
 

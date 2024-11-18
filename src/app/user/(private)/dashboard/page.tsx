@@ -9,8 +9,11 @@ import { useBusinesses } from "./_hooks/useBusinesses";
 import { toast } from "sonner";
 import _ from "lodash";
 import BusinessCarrousel from "./_components/BusinessCarrousel";
+import CategoriesCarrousel from "./_components/CategoriesCarrousel";
 
 export default function Page() {
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
   const [longitude, setLongitude] = useState<number | undefined>(undefined);
 
@@ -21,7 +24,7 @@ export default function Page() {
   const totalQuantity = useMemo(() => (order.products || []).reduce((acc, product) => acc + product.quantity, 0), [order.products]);
   const totalProducts = useMemo(() => (order.products || []).reduce((acc, product) => acc + product.price * product.quantity, 0), [order.products]);
 
-  const businessQuery = useBusinesses(latitude, longitude);
+  const businessQuery = useBusinesses({latitude, longitude, selectedCategory});
   const businesses = useMemo(() => businessQuery.data || [], [businessQuery.data]);
   const mappedBusinesses = useMemo(() => {
     return _.keyBy(businesses, '_id');
@@ -60,6 +63,7 @@ export default function Page() {
     }
   }, [latitude, longitude]);
 
+
   return (
     <div className="relative">
       {/* {
@@ -90,7 +94,8 @@ export default function Page() {
       } */}
       {/* <BusinessGrid businesses={businesses} businessQuery={businessQuery} /> */}
       <div className="flex flex-col gap-4">
-        <BusinessCarrousel businesses={businesses} />
+        <CategoriesCarrousel categorySelected={selectedCategory} setCategorySelected={setSelectedCategory} />
+        <BusinessCarrousel businesses={businesses} loading={businessQuery.isLoading} />
       </div>
     </div>
   )

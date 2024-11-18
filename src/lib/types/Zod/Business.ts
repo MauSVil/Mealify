@@ -12,6 +12,8 @@ export const BusinessSchema = z.object({
   createdAt: z.coerce.date().nullable(),
   updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().nullable(),
+  premium: z.boolean().default(false).optional(),
+  category: z.enum(['Mexican', 'Italian', 'American', 'Asian', 'Other']),
 });
 
 export type Business = z.infer<typeof BusinessSchema>;
@@ -19,6 +21,7 @@ export type Business = z.infer<typeof BusinessSchema>;
 export const BusinessRepositoryFilterModel = z.object({
   owner: z.string().optional(),
   id: z.string().optional(),
+  category: z.enum(['Mexican', 'Italian', 'American', 'Asian', 'Other']).optional(),
 });
 
 export type BusinessRepositoryFilter = z.infer<typeof BusinessRepositoryFilterModel>;

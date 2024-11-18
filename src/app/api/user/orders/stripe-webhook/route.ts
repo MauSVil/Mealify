@@ -65,11 +65,11 @@ export async function POST(req: NextRequest) {
       if (!admin) throw new Error('No se encontró el restaurante para esta orden');
       if (!admin.onboardingFinished) throw new Error('El usuario no ha completado el proceso de onboarding');
 
-      const { checkoutSessionId } = order;
+      const { checkoutSessionId, deliveryPersonComission, shippingAmount } = order;
   
       const platformFee = Math.round(netAmount * 0.10);
-      const deliveryFee = Math.round(netAmount * 0.05);
-      const restaurantAmount = netAmount - platformFee - deliveryFee;
+      const deliveryFee = Math.round(netAmount * (deliveryPersonComission / 100));
+      const restaurantAmount = netAmount - platformFee - deliveryFee - shippingAmount
   
       console.log('*********************');
       console.log(`Monto neto después de comisiones: ${netAmount}`);
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
       // Transferencia para el repartidor
       // await stripe.transfers.create({
-      //   amount: deliveryFee,
+      //   amount: deliveryFee + shippingAmount,
       //   currency: 'mxn',
       //   destination: "acct_1QF7PLRiGCLkNX6A", // Repartidor?
       //   source_transaction: chargeId as string,

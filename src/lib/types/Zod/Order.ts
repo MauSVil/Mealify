@@ -21,6 +21,7 @@ export const OrderSchema = z.object({
   userLon: z.number(),
   userLat: z.number(),
   deliveryStatus : z.enum(['in-process', 'on-way', 'delivered']).nullable(),
+  deliveryPersonComission: z.number().default(5),
 });
 
 export type Order = z.infer<typeof OrderSchema>;

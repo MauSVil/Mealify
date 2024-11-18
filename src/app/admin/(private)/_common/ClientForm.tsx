@@ -21,6 +21,8 @@ const defaultValues: Omit<Business, "heroImage"> = {
   createdAt: new Date(),
   updatedAt: new Date(),
   deletedAt: null,
+  premium: false,
+  category: 'Other',
 };
 
 const mapContainerStyle = {
@@ -119,15 +121,29 @@ const ClientForm = <TMutationData, TMutationError, TMutationVariables>(props: Pr
                   required
                 />
 
-                <InputFormField
-                  controllerProps={{
-                    control: form.control,
-                    name: "description",
-                  }}
-                  label="Description"
-                  type="text"
-                  required
-                />
+                <div className="flex gap-4">
+                  <InputFormField
+                    className="flex-1"
+                    controllerProps={{
+                      control: form.control,
+                      name: "description",
+                    }}
+                    label="Description"
+                    type="text"
+                    required
+                  />
+
+                  <InputFormField
+                    className="flex-1"
+                    controllerProps={{
+                      control: form.control,
+                      name: "category",
+                    }}
+                    label="Categoría"
+                    type="text"
+                    required
+                  />
+                </div>
 
                 <InputFormField
                   controllerProps={{
