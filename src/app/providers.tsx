@@ -10,6 +10,7 @@ import { CartProvider } from "./_providers/CartProvider";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { CheckoutSheetContextType } from "@/lib/types/CheckoutSheet";
 import { CheckoutSheetProvider } from "./_providers/CheckoutSheetProvider";
+import ModalContainer from 'react-modal-promise';
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CheckoutSheetContext = createContext<CheckoutSheetContextType | undefined>(undefined);
@@ -31,6 +32,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
             >
               <ReactQueryDevtools position="left" buttonPosition="bottom-left" />
               <TooltipProvider>
+                <ModalContainer />
                 {children}
               </TooltipProvider>
             </ThemeProvider>

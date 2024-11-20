@@ -52,7 +52,7 @@ const CategoriesCarrousel = (props: Props) => {
                     className={cn("flex flex-col gap-4 cursor-pointer items-center justify-center border-[1px] border-slate-200 rounded-lg p-4", {
                       "border-primary": category.name === props.categorySelected,
                     })}
-                    onClick={() => props.setCategorySelected?.(category.name)}
+                    onClick={() => props.setCategorySelected?.(category.name === props.categorySelected ? '' : category.name)}
                   >
                     {category.icon}
                   </div>

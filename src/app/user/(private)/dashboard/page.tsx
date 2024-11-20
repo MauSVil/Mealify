@@ -10,12 +10,12 @@ import { toast } from "sonner";
 import _ from "lodash";
 import BusinessCarrousel from "./_components/BusinessCarrousel";
 import CategoriesCarrousel from "./_components/CategoriesCarrousel";
+import { useAddress } from "@/hooks/useAddress";
 
 export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
 
-  const [latitude, setLatitude] = useState<number | undefined>(undefined);
-  const [longitude, setLongitude] = useState<number | undefined>(undefined);
+  const { address } = useAddress();
 
   const ordersQuery = useOrders();
   const orders = useMemo(() => ordersQuery.data || [], [ordersQuery.data]);
@@ -24,7 +24,7 @@ export default function Page() {
   const totalQuantity = useMemo(() => (order.products || []).reduce((acc, product) => acc + product.quantity, 0), [order.products]);
   const totalProducts = useMemo(() => (order.products || []).reduce((acc, product) => acc + product.price * product.quantity, 0), [order.products]);
 
-  const businessQuery = useBusinesses({latitude, longitude, selectedCategory});
+  const businessQuery = useBusinesses({ address, selectedCategory});
   const businesses = useMemo(() => businessQuery.data || [], [businessQuery.data]);
   const mappedBusinesses = useMemo(() => {
     return _.keyBy(businesses, '_id');
@@ -35,34 +35,6 @@ export default function Page() {
   const handleSeeDetails = () => {
     router.push(`/user/orders/${orders[0]._id}`)
   }
-
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setLatitude(latitude);
-          setLongitude(longitude);
-        },
-        (err) => {
-          toast.error("Error al buscar restaurantes");
-        }
-      );
-    } else {
-      toast.error("Debes habilitar la geolocalización para poder buscar restaurantes");
-    }
-  };
-
-  useEffect(() => {
-    getLocation();
-  }, []);
-
-  useEffect(() => {
-    if (latitude && longitude) {
-      businessQuery.refetch();
-    }
-  }, [latitude, longitude]);
-
 
   return (
     <div className="relative">
@@ -96,6 +68,7 @@ export default function Page() {
       <div className="flex flex-col gap-4">
         <CategoriesCarrousel categorySelected={selectedCategory} setCategorySelected={setSelectedCategory} />
         <BusinessCarrousel businesses={businesses} loading={businessQuery.isLoading} />
+        <BusinessCarrousel businesses={businesses} loading={businessQuery.isLoading} title="Recomendados" />
       </div>
     </div>
   )

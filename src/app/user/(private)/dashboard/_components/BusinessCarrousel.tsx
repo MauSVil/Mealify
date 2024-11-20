@@ -26,18 +26,6 @@ const BusinessCarrousel = ({ businesses, title = "Para ti", loading }: { busines
       )
     }
 
-    if (!businesses.length) {
-      return (
-        <CarouselItem className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-          <div className="flex flex-col gap-4">
-            <div className="w-full relative min-h-[185px] flex items-center justify-center">
-              No hay negocios disponibles
-            </div>
-          </div>
-        </CarouselItem>
-      )
-    }
-
     return (
       businesses.map((business) => (
         <CarouselItem key={business._id} className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
@@ -74,18 +62,31 @@ const BusinessCarrousel = ({ businesses, title = "Para ti", loading }: { busines
         {title}
       </h3>
       <div className="flex justify-center p-10 items-center">
-        <Carousel
-          opts={{
-            align: "start",
-          }}
-          className="relative flex-1"
-        >
-          <CarouselContent>
-            {carrouselContent}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        {
+          businesses.length === 0 ? (
+            <div className="flex flex-col gap-4 items-center justify-center">
+              <div className="text-2xl font-bold">
+                No hay negocios disponibles
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Intenta cambiar la categoría
+              </p>
+            </div>  
+          ) : (
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className="relative flex-1"
+            >
+              <CarouselContent>
+                {carrouselContent}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          )
+        }
       </div>
     </div>
   )
