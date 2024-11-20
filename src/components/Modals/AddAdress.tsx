@@ -14,6 +14,7 @@ import { useJsApiLoader } from '@react-google-maps/api';
 import { Input } from '../ui/input';
 import { AlertDialogTitle } from '@radix-ui/react-alert-dialog';
 import { Library } from '@googlemaps/js-api-loader';
+import { toast } from 'sonner';
 
 export interface AddAddressProps extends InstanceProps<any, any> {}
 
@@ -85,6 +86,10 @@ function AddAdress(props: AddAddressProps) {
   }, [autoComplete])
 
   const onSubmit = async () => {
+    if (!latitude || !longitude || !name) {
+      toast.error('Debes rellenar todos los campos');
+      return;
+    }
     await onResolve({
       name,
       latitude,
