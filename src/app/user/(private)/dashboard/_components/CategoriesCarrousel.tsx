@@ -41,12 +41,12 @@ const CategoriesCarrousel = (props: Props) => {
           opts={{
             align: "start",
           }}
-          className="relative flex-1"
+          className="flex-1"
         >
-          <CarouselContent>
+          <CarouselContent className="flex-nowrap">
             {
               categories.map((category) => (
-                <CarouselItem key={category.name} className="basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <CarouselItem key={category.name} className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <div
                     key={category.name}
                     className={cn("flex flex-col gap-4 cursor-pointer items-center justify-center border-[1px] border-slate-200 rounded-lg p-4", {
