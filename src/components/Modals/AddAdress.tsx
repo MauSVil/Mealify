@@ -1,10 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ReloadIcon } from '@radix-ui/react-icons';
-import { useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+
 import { InstanceProps, create } from 'react-modal-promise';
-import { toast } from 'sonner';
-import { z } from 'zod';
 
 import {
   AlertDialog,
@@ -14,50 +9,86 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
 } from '@/components/ui/alert-dialog';
-import { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { Loader2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useJsApiLoader } from '@react-google-maps/api';
 import { Input } from '../ui/input';
 import { AlertDialogTitle } from '@radix-ui/react-alert-dialog';
-
-const mapContainerStyle = {
-  width: '100%',
-  height: '400px',
-};
+import { Library } from '@googlemaps/js-api-loader';
 
 export interface AddAddressProps extends InstanceProps<any, any> {}
+
+const libraries: Library[] = ['core', 'maps', 'places', 'marker']
 
 function AddAdress(props: AddAddressProps) {
   const { isOpen, onReject, onResolve } = props;
   const [name, setName] = useState('');
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [autoComplete, setAutoComplete] = useState<google.maps.places.Autocomplete | null>(null);
+  const [latitude, setLatitude] = useState<number>(0);
+  const [longitude, setLongitude] = useState<number>(0);
 
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    language: 'es',
+    libraries,
+  })
 
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (event.latLng) {
-      const lat = event.latLng.lat();
-      const lng = event.latLng.lng();
-      setMapCenter({ lat, lng });
-    }
-  };
+  const mapRef = useRef<HTMLDivElement>(null);
+  const placeAutoCompleteRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setMapCenter({ lat: latitude, lng: longitude });
-      },
-      () => {
-        setMapCenter({ lat: 0, lng: 0 });
-      }
-    );
-  }, [])
+    if (isLoaded) {
+      const timer = setTimeout(() => {
+        if (mapRef.current) {
+          const mapOptions = {
+            center: { lat: 19.5101674, lng: -99.2394589 },
+            zoom: 15,
+            mapId: 'MY-MAP-1234',
+          };
+          
+          const gMap = new google.maps.Map(mapRef.current, mapOptions);
+
+          const gAutoComplete = new google.maps.places.Autocomplete(placeAutoCompleteRef.current as HTMLInputElement);
+
+          setAutoComplete(gAutoComplete);
+          setMap(gMap);
+        }
+      }, 300); 
+      return () => clearTimeout(timer);
+    }
+  }, [isLoaded]);
+
+  const setMarker = (location: google.maps.LatLng, name: string) => {
+    if (!map) return;
+    map.setCenter(location);
+    new google.maps.marker.AdvancedMarkerElement({
+      map: map,
+      position: location,
+      title: name,
+    })
+  }
+
+  useEffect(() => {
+    if (autoComplete) {
+      autoComplete.addListener('place_changed', () => {
+        const place = autoComplete.getPlace();
+        if (place.geometry) {
+          const position = place.geometry.location;
+          if (position) {
+            setMarker(position, place.name!);
+            setLatitude(position.lat());
+            setLongitude(position.lng());
+          }
+        }
+      });
+    }
+  }, [autoComplete])
 
   const onSubmit = async () => {
     await onResolve({
       name,
-      latitude: mapCenter.lat,
-      longitude: mapCenter.lng,
+      latitude,
+      longitude,
     });
   }
 
@@ -67,26 +98,11 @@ function AddAdress(props: AddAddressProps) {
         <AlertDialogHeader>
           <AlertDialogTitle>{'Agregar nueva ubicación'}</AlertDialogTitle>
         </AlertDialogHeader>
-        <Input placeholder="Nombre de la ubicación..." value={name} onChange={(e) => setName(e.target.value)} />
-        <div className="w-full flex flex-col pb-4 sm:pb-6 lg:pb-8">
-          {
-            (!!mapCenter.lat && !!mapCenter.lng) && (
-              <LoadScript
-                googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-                loadingElement={<div style={{ height: `100%` }}><Loader2 className="mr-2 h-4 w-4 animate-spin" /></div>}
-              >
-                <GoogleMap
-                  mapContainerStyle={mapContainerStyle}
-                  center={mapCenter}
-                  zoom={14}
-                  onClick={handleMapClick}
-                >
-                  <Marker position={mapCenter} />
-                </GoogleMap>
-              </LoadScript>
-            )
-          }
+        <div className='flex-1 flex flex-col gap-4'>
+          <Input placeholder="Nombre de la ubicación..." value={name} onChange={(e) => setName(e.target.value)} />
+          <Input ref={placeAutoCompleteRef} />
         </div>
+        <div className='flex-1 h-72 w-full' ref={mapRef} />
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onReject}>
             {'Cancelar'}

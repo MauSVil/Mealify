@@ -134,7 +134,6 @@ export function NavActions() {
                 <CommandItem
                   onSelect={() => {
                     setOpen(false)
-                    setAddressValue("")
                     handleAddAddress()
                   }}
                 >
