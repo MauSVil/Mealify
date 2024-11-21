@@ -1,5 +1,6 @@
 import { AddressRepository } from "@/lib/Repositories/Address.repository";
 import { BusinessRepository } from "@/lib/Repositories/Business.repository";
+import { Business } from "@/lib/types/Zod/Business";
 import { findNearbyRestaurants } from "@/lib/utils";
 import _ from "lodash";
 import { NextRequest, NextResponse } from "next/server";
@@ -30,10 +31,19 @@ export const POST = async (req: NextRequest) => {
 
     const businessesByCategory = _.groupBy(nearbyRestaurants, 'category');
 
-    const restaurantsToSend = {
-      nearbyRestaurants: nearbyRestaurants,
+    const restaurantsToSend: Record<string, Business[]> = {
       nearbyRecommendedRestaurants: nearbyRecommendedRestaurants,
+      nearbyRestaurants: nearbyRestaurants,
       ...businessesByCategory,
+    }
+
+    if (selectedCategory) {
+      const allBusinesses = await BusinessRepository.find({ category: selectedCategory });
+      const nearbyRecommendedRestaurants = findNearbyRestaurants(latitude, longitude, allBusinesses, 5);
+
+      return NextResponse.json({ data: {
+        [selectedCategory]: nearbyRecommendedRestaurants,
+      } });
     }
 
     return NextResponse.json({ data: restaurantsToSend });

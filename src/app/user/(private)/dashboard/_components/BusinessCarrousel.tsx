@@ -7,9 +7,14 @@ import { useMemo } from "react";
 const BusinessCarrousel = ({ businesses, title = "Para ti", loading }: { businesses: Business[], title?: string, loading?: boolean }) => {
   const router = useRouter();
 
-  const handleBusinessClick = (id: string) => {
-    router.push(`/user/businesses/${id}`)
-  }
+  const handleBusinessClick = useMemo(() => {
+    if (loading) {
+      return () => {};
+    }
+    return (id: string) => {
+      router.push(`/user/businesses/${id}`)
+    }
+  }, [loading, router]);
 
   const carrouselContent = useMemo(() => {
     if (loading) {
@@ -55,6 +60,8 @@ const BusinessCarrousel = ({ businesses, title = "Para ti", loading }: { busines
       ))
     )
   }, [loading, businesses, handleBusinessClick]);
+
+  if (businesses.length === 0 && !loading) return null;
 
   return (
     <div>

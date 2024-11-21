@@ -23,11 +23,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "./ui/command";
 import { useAddress } from "@/hooks/useAddress";
 import { useAddresses } from "@/hooks/useAddresses";
+import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 
 export function NavActions() {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [comission, setComission] = React.useState(5);
   const { isOpenCheckoutSheet, openCheckoutSheet, closeCheckoutSheet } = useCheckoutSheet();
@@ -118,6 +120,7 @@ export function NavActions() {
                     onSelect={(currentValue) => {
                       setAddressValue(currentValue)
                       setOpen(false)
+                      router.push('/user/dashboard')
                     }}
                   >
                     {ad.name}
