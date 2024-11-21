@@ -63,7 +63,7 @@ const BusinessCarrousel = ({ businesses, title = "Para ti", loading }: { busines
       </h3>
       <div className="flex justify-center p-10 items-center">
         {
-          businesses.length === 0 ? (
+          businesses.length === 0 && !loading ? (
             <div className="flex flex-col gap-4 items-center justify-center">
               <div className="text-2xl font-bold">
                 No hay negocios disponibles

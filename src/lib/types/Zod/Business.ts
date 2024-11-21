@@ -22,6 +22,7 @@ export const BusinessRepositoryFilterModel = z.object({
   owner: z.string().optional(),
   id: z.string().optional(),
   category: z.enum(['Mexican', 'Italian', 'American', 'Asian', 'Other']).optional(),
+  premium: z.boolean().optional(),
 });
 
 export type BusinessRepositoryFilter = z.infer<typeof BusinessRepositoryFilterModel>;
