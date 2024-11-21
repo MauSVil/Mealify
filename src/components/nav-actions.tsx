@@ -26,7 +26,6 @@ import { useAddresses } from "@/hooks/useAddresses";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const addresses: any[] = []
 
 export function NavActions() {
   const [open, setOpen] = React.useState(false);
@@ -36,6 +35,8 @@ export function NavActions() {
 
   const addressesQuery = useAddresses();
   const addresses = React.useMemo(() => addressesQuery.data || [], [addressesQuery.data]);
+
+  const { address, setAddressValue} = useAddress();
 
   const productsTotal = React.useMemo(() => {
     return Object.keys(cart).reduce((acc, key) => {
@@ -54,8 +55,7 @@ export function NavActions() {
     const checkoutSession = await ky.post('/api/user/orders/create-checkout-session', {
       json: {
         products: cart,
-        userLon: -99.236221,
-        userLat: 19.545230,
+        address,
         deliveryPersonComission: comission,
       }
     }).json() as { data?: string, error?: string };
@@ -81,7 +81,6 @@ export function NavActions() {
     }
   }
 
-  const { address, setAddressValue} = useAddress();
 
   React.useEffect(() => {
     if (addresses.length > 0) {

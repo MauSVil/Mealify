@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { validateIfToken } from "@/lib/utils";
 import { OrderRepository } from "@/lib/Repositories/Order.repository";
 import { Order } from "@/lib/types/Zod/Order";
+import { AddressRepository } from "@/lib/Repositories/Address.repository";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -20,15 +21,18 @@ export const POST = async (req: NextRequest) => {
     const user = await jwt.verify(token, process.env.USER_JWT_SECRET!) as { id: string };
 
     const body = await req.json();
-    const { products, userLon, userLat, deliveryPersonComission = 5 } = body as {
+    const { products, address, deliveryPersonComission = 5 } = body as {
       products: { [id: string]: ProductCart },
-      userLon: number,
-      userLat: number,
+      address: string,
       deliveryPersonComission?: number,
     };
     if (!products || Object.keys(products).length === 0) {
       return NextResponse.json({ error: 'No hay productos' }, { status: 400 });
     }
+
+    const addressFound = await AddressRepository.findOne({ id: address });
+    if (!addressFound) throw new Error('Address not found');
+    const { latitude, longitude } = addressFound;
 
     const business = await BusinessRepository.findOne({ id: products[Object.keys(products)[0]].restaurantId });
     if (!business) {
@@ -37,7 +41,7 @@ export const POST = async (req: NextRequest) => {
 
     const eta = await ky.post(`${req.headers.get('origin')}/api/user/orders/eta`, {
       json: {
-        user: { longitude: userLon, latitude: userLat },
+        user: { longitude, latitude },
         restaurant: { longitude: business.longitude, latitude: business.latitude },
       }
     }).json() as {
@@ -124,8 +128,8 @@ export const POST = async (req: NextRequest) => {
       checkoutSessionId: '',
       paymentIntentId: '',
       shippingAmount: shippingCost,
-      userLat,
-      userLon,
+      userLat: latitude,
+      userLon: longitude,
       deliveryStatus: null,
       deliveryPersonComission,
     }
