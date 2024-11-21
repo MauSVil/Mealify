@@ -16,7 +16,7 @@ export type User = z.infer<typeof UserSchema>;
 
 export const UserRepositoryFilterModel = z.object({
   email: z.string().optional(),
-  role: z.enum(['admin', 'user']).optional(),
+  role: z.enum(['admin', 'user', 'delivery']).optional(),
   id: z.string().optional(),
   stripeAccountId: z.string().optional(),
 });
