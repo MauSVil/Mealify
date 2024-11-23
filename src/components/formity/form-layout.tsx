@@ -24,7 +24,7 @@ export default function FormLayout({
         <p className="mb-6 text-center text-base text-neutral-500">
           {description}
         </p>
-        <div className="scrollbar-hide mb-4 max-h-96 overflow-auto">
+        <div className="scrollbar-hide mb-4 max-h-96 overflow-auto p-2">
           <div className="space-y-4 pt-2">{fields}</div>
         </div>
         {button}

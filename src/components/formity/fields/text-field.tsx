@@ -4,8 +4,8 @@ import { useId } from "react";
 
 
 import Field from "../user-interface/field";
-import Input from "../user-interface/input";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 interface TextFieldProps {
   type: string;
@@ -27,27 +27,19 @@ export default function TextField({
     <Field
       id={id}
       label={label}
-      labelClassName={cn(
-        "peer-placeholder-shown:top-[17px] peer-placeholder-shown:before:bg-transparent peer-focus:before:bg-neutral-950",
-        "peer-placeholder-shown:text-base peer-focus:-top-[11px] peer-focus:text-sm",
-      )}
       error={error}
     >
       <Input
-        as="input"
-        props={{
-          id: id,
-          type: type,
-          value: value,
-          onChange: (e: ChangeEvent<HTMLInputElement>) => {
-            onChange(e.target.value);
-          },
-          placeholder: label,
+        type={type}
+        value={value}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          onChange(e.target.value);
         }}
         className={cn(
           "peer placeholder-transparent focus:border-neutral-500 focus:outline-none focus:ring-transparent",
           { "border-red-500 focus:border-red-500": error },
         )}
+        placeholder={label}
       />
     </Field>
   );

@@ -5,22 +5,27 @@ const schema: Schema = [
     form: {
       defaultValues: {
         name: ["", []],
-        surname: ["", []],
+        firstLastName: ["", []],
+        secondLastName: ["", []],
         age: ["", []],
       },
       resolver: {
         name: [
-          [{ "#$ne": ["#$name", ""] }, "Required"],
-          [{ "#$lt": [{ "#$strLen": "#$name" }, 20] }, "Max 20 chars"],
+          [{ "#$ne": ["#$name", ""] }, "Requerido"],
+          [{ "#$lt": [{ "#$strLen": "#$name" }, 20] }, "Maximo 20 caracteres"],
         ],
-        surname: [
-          [{ "#$ne": ["#$surname", ""] }, "Required"],
-          [{ "#$lt": [{ "#$strLen": "#$surname" }, 20] }, "Max 20 chars"],
+        firstLastName: [
+          [{ "#$ne": ["#$firstLastName", ""] }, "Requerido"],
+          [{ "#$lt": [{ "#$strLen": "#$firstLastName" }, 20] }, "Maximo 20 caracteres"],
+        ],
+        secondLastName: [
+          [{ "#$ne": ["#$secondLastName", ""] }, "Requerido"],
+          [{ "#$lt": [{ "#$strLen": "#$secondLastName" }, 20] }, "Maximo 20 caracteres"],
         ],
         age: [
-          [{ "#$ne": ["#$age", ""] }, "Required"],
-          [{ "#$gte": ["#$age", 10] }, "You must be at least 10 years old"],
-          [{ "#$lte": ["#$age", 100] }, "You must be at most 100 years old"],
+          [{ "#$ne": ["#$age", ""] }, "Requerido"],
+          [{ "#$gte": ["#$age", 18] }, "Debes ser mayor de 18 años"],
+          [{ "#$lte": ["#$age", 100] }, "Debes ser menor de 100 años"],
         ],
       },
       render: {
@@ -34,9 +39,9 @@ const schema: Schema = [
               onNext: "$onNext",
               children: {
                 formLayout: {
-                  heading: "Tell us about yourself",
+                  heading: "Platicanos sobre ti",
                   description:
-                    "We would want to know a little bit more about you",
+                    "Quisieramos saber un poco más sobre ti",
                   fields: [
                     {
                       row: {
@@ -44,13 +49,19 @@ const schema: Schema = [
                           {
                             textField: {
                               name: "name",
-                              label: "Name",
+                              label: "Nombre",
                             },
                           },
                           {
                             textField: {
-                              name: "surname",
-                              label: "Surname",
+                              name: "firstLastName",
+                              label: "Primer Apellido",
+                            },
+                          },
+                          {
+                            textField: {
+                              name: "secondLastName",
+                              label: "Segundo Apellido",
                             },
                           },
                         ],
@@ -59,12 +70,12 @@ const schema: Schema = [
                     {
                       numberField: {
                         name: "age",
-                        label: "Age",
+                        label: "Edad",
                       },
                     },
                   ],
                   button: {
-                    next: { text: "Next" },
+                    next: { text: "Siguiente" },
                   },
                 },
               },
@@ -278,7 +289,7 @@ const schema: Schema = [
         },
         {
           return: {
-            fullName: { $concat: ["$name", " ", "$surname"] },
+            fullName: { $concat: ["$name", "", "$firstLastName", " ", "$secondLastName"] },
             age: "$age",
             softwareDeveloper: "$softwareDeveloper",
             languages: "$languagesRatings",
@@ -342,7 +353,7 @@ const schema: Schema = [
         },
         {
           return: {
-            fullName: { $concat: ["$name", " ", "$surname"] },
+            fullName: { $concat: ["$name", " ", "$firstLastName", " ", "$secondLastName"] },
             age: "$age",
             softwareDeveloper: "$softwareDeveloper",
             interested: "$interested",
