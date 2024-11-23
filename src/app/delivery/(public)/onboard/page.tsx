@@ -3,7 +3,7 @@
 import type { Value } from "expry";
 
 import { AnimatePresence, motion } from "framer-motion";
-import Form from "@/components/DeliveryOnboard/Form";
+import Form from "@/components/formity/FormWrapper";
 
 
 export default function Home() {

@@ -9,18 +9,18 @@ import type {
 import type { Value } from "expry";
 
 import { Fragment } from "react";
-import Screen from "../formity/screen";
-import Form from "../formity/form";
-import FormLayout from "../formity/form-layout";
-import Next from "../formity/navigation/next";
-import Back from "../formity/navigation/back";
-import Row from "../formity/user-interface/row";
-import TextField from "../formity/react-hook-form/text-field";
-import NumberField from "../formity/react-hook-form/number-field";
-import Listbox from "../formity/react-hook-form/listbox";
-import YesNo from "../formity/react-hook-form/yes-no";
-import Select from "../formity/react-hook-form/select";
-import MultiSelect from "../formity/react-hook-form/multi-select";
+import Screen from "./screen";
+import Form from "./form";
+import FormLayout from "./form-layout";
+import Next from "./navigation/next";
+import Back from "./navigation/back";
+import Row from "./user-interface/row";
+import TextField from "./react-hook-form/text-field";
+import NumberField from "./react-hook-form/number-field";
+import Listbox from "./react-hook-form/listbox";
+import YesNo from "./react-hook-form/yes-no";
+import Select from "./react-hook-form/select";
+import MultiSelect from "./react-hook-form/multi-select";
 
 
 type Parameters = {

@@ -6,6 +6,7 @@ import { useId } from "react";
 import Field from "../user-interface/field";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface TextFieldProps {
   type: string;
@@ -29,6 +30,7 @@ export default function TextField({
       label={label}
       error={error}
     >
+      <Label htmlFor={id}>{label}</Label>
       <Input
         type={type}
         value={value}
@@ -39,7 +41,6 @@ export default function TextField({
           "peer placeholder-transparent focus:border-neutral-500 focus:outline-none focus:ring-transparent",
           { "border-red-500 focus:border-red-500": error },
         )}
-        placeholder={label}
       />
     </Field>
   );

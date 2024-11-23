@@ -3,7 +3,7 @@ import type { OnReturn } from "formity";
 import { Formity } from "formity";
 
 import components from "./components";
-import schema from "./schema";
+import schema from "../DeliveryOnboard/schema";
 
 interface FormProps {
   onReturn: OnReturn;
