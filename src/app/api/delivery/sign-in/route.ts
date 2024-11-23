@@ -29,7 +29,14 @@ export const POST = async (req: NextRequest) => {
 
     cookies().set('dtoken', token);
 
-    return NextResponse.json({ data: { token } });
+    let url = '';
+    if (user.onboardingFinished) {
+      url = '/delivery/dashboard';
+    } else {
+      url = '/delivery/onboard';
+    }
+
+    return NextResponse.json({ data: { token, url } });
   } catch (e) {
     console.error('Error signing in', e);
     if (e instanceof Error) {

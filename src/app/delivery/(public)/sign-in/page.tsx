@@ -42,9 +42,9 @@ const DeliverySignIn = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
-      const resp = await ky.post("/api/delivery/sign-in", { json: values }).json() as { data?: string, error?: string };
+      const resp = await ky.post("/api/delivery/sign-in", { json: values }).json() as { data?: { token: string, url: string }, error?: string };
       setTimeout(() => {
-        router.push("/delivery/onboard")
+        router.push(resp.data?.url || "/delivery/onboard")
       }, 1000)
       return resp;
     } catch (e) {
