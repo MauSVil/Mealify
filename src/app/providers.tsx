@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { CheckoutSheetContextType } from "@/lib/types/CheckoutSheet";
 import { CheckoutSheetProvider } from "./_providers/CheckoutSheetProvider";
 import ModalContainer from 'react-modal-promise';
+import { UserProvider } from "./_providers/UserProvider";
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CheckoutSheetContext = createContext<CheckoutSheetContextType | undefined>(undefined);
@@ -21,24 +22,26 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <Toaster richColors />
-      <CheckoutSheetProvider>
-        <CartProvider>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ReactQueryDevtools position="left" buttonPosition="bottom-left" />
-              <TooltipProvider>
-                <ModalContainer />
-                {children}
-              </TooltipProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </CartProvider>
-      </CheckoutSheetProvider>
+      <UserProvider>
+        <CheckoutSheetProvider>
+          <CartProvider>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <ReactQueryDevtools position="left" buttonPosition="bottom-left" />
+                <TooltipProvider>
+                  <ModalContainer />
+                  {children}
+                </TooltipProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
+          </CartProvider>
+        </CheckoutSheetProvider>
+      </UserProvider>
     </>
   );
 }
