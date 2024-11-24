@@ -32,7 +32,6 @@ export const POST = async (req: NextRequest) => {
       vehicle: '',
       vehicleRegistration: null,
       motorType: null,
-      stripeFormFinished: false,
       active: false,
     });
     return NextResponse.json({ message: 'Usuario registrado correctamente' });

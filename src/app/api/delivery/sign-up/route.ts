@@ -37,7 +37,6 @@ export const POST = async (req: NextRequest) => {
       vehicle: '',
       vehicleRegistration: null,
       motorType: null,
-      stripeFormFinished: false,
       active: false,
     });
 
