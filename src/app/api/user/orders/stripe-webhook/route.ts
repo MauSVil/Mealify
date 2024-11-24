@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { OrderRepository } from '@/lib/Repositories/Order.repository';
 import { BusinessRepository } from '@/lib/Repositories/Business.repository';
 import { UsersRepository } from '@/lib/Repositories/User.repository';
+import axios from 'axios';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -34,17 +35,15 @@ export async function POST(req: NextRequest) {
       const receiptUrl = charge.receipt_url as string;
 
       const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
-      if (!order) {
-        throw new Error('No se encontró la orden');
-      }
+      if (!order) throw new Error('No se encontró la orden');
       await OrderRepository.updateOne(order._id!, {
         status: 'paid',
         paymentIntentId: paymentIntentId?.toString(),
         checkoutSessionId: sessionId,
         shippingAmount: Number(shippingAmount),
         receiptUrl,
-        deliveryStatus: 'in-process',
       });
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/new-order`, { order: order._id });
     }
 
     if (event.type === 'charge.updated') {

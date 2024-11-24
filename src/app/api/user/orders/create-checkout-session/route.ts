@@ -17,8 +17,8 @@ const myComission = 10;
 export const POST = async (req: NextRequest) => {
   try {
     const token = await validateIfToken(req, 'utoken');
-
     const user = await jwt.verify(token, process.env.USER_JWT_SECRET!) as { id: string };
+
 
     const body = await req.json();
     const { products, address, deliveryPersonComission = 5 } = body as {
