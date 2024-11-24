@@ -124,7 +124,7 @@ export const POST = async (req: NextRequest) => {
           quantity: product.quantity,
         };
       }),
-      status: 'pending',
+      status: 'on-hold',
       checkoutSessionId: '',
       paymentIntentId: '',
       shippingAmount: shippingCost,
