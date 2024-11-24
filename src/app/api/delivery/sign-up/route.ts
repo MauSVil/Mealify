@@ -2,6 +2,8 @@ import { UsersRepository } from "@/lib/Repositories/User.repository";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 import Stripe from "stripe";
+import jwt from 'jsonwebtoken';
+import { cookies } from "next/headers";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -26,11 +28,30 @@ export const POST = async (req: NextRequest) => {
       updatedAt: new Date(),
       stripeAccountId: null,
       onboardingFinished: false,
+      stripeConfigFinished: false,
+      name: '',
+      firstLastName: '',
+      secondLastName: '',
+      age: 0,
+      telephone: '',
+      vehicle: '',
+      vehicleRegistration: null,
+      motorType: null,
+      stripeFormFinished: false,
+      active: false,
     });
 
     const insertedUser = await UsersRepository.findOne({ id: insertedId });
 
     if (!insertedUser) throw new Error('No se ha podido crear el usuario');
+
+    const token = jwt.sign({
+      id: insertedId,
+      email: email,
+      role: 'delivery',
+    }, process.env.DELIVERY_JWT_SECRET!, { expiresIn: '1d' });
+
+    cookies().set('dtoken', token);
 
     const account = await stripe.accounts.create({
       type: "express",

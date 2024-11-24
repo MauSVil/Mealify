@@ -23,6 +23,17 @@ export const POST = async (req: NextRequest) => {
       updatedAt: new Date(),
       stripeAccountId: null,
       onboardingFinished: false,
+      stripeConfigFinished: false,
+      name: '',
+      firstLastName: '',
+      secondLastName: '',
+      age: 0,
+      telephone: '',
+      vehicle: '',
+      vehicleRegistration: null,
+      motorType: null,
+      stripeFormFinished: false,
+      active: false,
     });
     return NextResponse.json({ message: 'Usuario registrado correctamente' });
   } catch (e) {

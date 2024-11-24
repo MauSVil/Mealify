@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { cookies } from "next/headers";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -29,13 +32,8 @@ export const POST = async (req: NextRequest) => {
 
     cookies().set('dtoken', token);
 
-    let url = '';
-    if (user.onboardingFinished) {
-      url = '/delivery/dashboard';
-    } else {
-      url = '/delivery/onboard';
-    }
-
+    let url = '/delivery/dashboard';
+    if (!user.onboardingFinished) url = '/delivery/onboard';
     return NextResponse.json({ data: { token, url } });
   } catch (e) {
     console.error('Error signing in', e);

@@ -49,6 +49,7 @@ type Parameters = {
     onBack: OnBack;
   };
   row: {
+    columns: number;
     items: Value[];
   };
   textField: {
@@ -109,8 +110,9 @@ const components: Components<Parameters> = {
   ),
   next: ({ text }) => <Next>{text}</Next>,
   back: ({ onBack }) => <Back onBack={onBack} />,
-  row: ({ items }, render) => (
+  row: ({ items, columns }, render) => (
     <Row
+      columns={columns}
       items={items.map((item, index) => (
         <Fragment key={index}>{render(item)}</Fragment>
       ))}

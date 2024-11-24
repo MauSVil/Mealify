@@ -4,11 +4,17 @@ import type { Value } from "expry";
 
 import { AnimatePresence, motion } from "framer-motion";
 import Form from "@/components/formity/FormWrapper";
+import ky from "ky";
 
 
-export default function Home() {
-  function handleReturn(result: Value) {
-    console.log(result);
+const DeliveryOnboardPage = () => {
+  const handleReturn = async (result: Value) => {
+    try {
+      const { data } = await ky.post('/api/delivery/complete-onboarding', { json: result }).json() as { data: string, error?: string };
+      window.location.href = data;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (
@@ -26,3 +32,5 @@ export default function Home() {
     </AnimatePresence>
   );
 }
+
+export default DeliveryOnboardPage;

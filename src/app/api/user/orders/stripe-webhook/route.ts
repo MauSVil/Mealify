@@ -99,11 +99,16 @@ export async function POST(req: NextRequest) {
 
     if (event.type === 'account.updated') {
       const account = event.data.object;
-      if (account.details_submitted) {
-        const user = await UsersRepository.findOne({ stripeAccountId: account.id });
-        if (!user) throw new Error('No se encontró el usuario asociado a la cuenta');
-        await UsersRepository.updateOne(user._id!, { onboardingFinished: true });
+
+      let stripeFinished = false;
+
+      if (account.details_submitted && (account.requirements?.currently_due || []).length === 0 && (account.requirements?.eventually_due || []).length === 0) {
+        stripeFinished = true;
       }
+
+      const user = await UsersRepository.findOne({ stripeAccountId: account.id });
+      if (!user) throw new Error('No se encontró el usuario asociado a la cuenta');
+      await UsersRepository.updateOne(user._id!, { stripeConfigFinished: stripeFinished, active: user.onboardingFinished && stripeFinished });
     }
 
     return NextResponse.json({ received: true }, { status: 200 });

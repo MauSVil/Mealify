@@ -3,6 +3,7 @@ import { RadioGroup as RadioGroupS, RadioGroupItem } from "@/components/ui/radio
 
 import Field from "../user-interface/field";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 interface RadioGroupProps {
   label: string;
@@ -22,11 +23,18 @@ export default function RadioGroup({ label, value, onChange, options, direction,
         onValueChange={onChange}
       >
         {options.map((option) => (
-          <div className="flex items-center gap-2" key={option.value}>
+          <div 
+           key={option.value}
+           className={cn(
+            "group flex cursor-pointer items-center gap-2 focus:outline-none",
+            { "border-neutral-500": value.includes(option.value) },
+            { "border-red-500": error },
+          )}
+          >
             <RadioGroupItem
               value={option.value}
             />
-            <Label>{option.label}</Label>
+            <Label className="text-base">{option.label}</Label>
           </div>
         ))}
       </RadioGroupS>

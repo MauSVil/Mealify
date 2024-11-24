@@ -26,6 +26,17 @@ export const POST = async (req: NextRequest) => {
       updatedAt: new Date(),
       stripeAccountId: null,
       onboardingFinished: false,
+      stripeConfigFinished: false,
+      name: '',
+      firstLastName: '',
+      secondLastName: '',
+      age: 0,
+      telephone: '',
+      vehicle: '',
+      vehicleRegistration: null,
+      motorType: null,
+      stripeFormFinished: false,
+      active: false,
     });
 
     const insertedUser = await UsersRepository.findOne({ id: insertedId });
