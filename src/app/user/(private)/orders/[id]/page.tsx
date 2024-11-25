@@ -19,6 +19,13 @@ const translatedStatuses: Record<string, string> = {
   'canceled': 'Cancelada',
 }
 
+const statusesDescriptions: Record<string, string> = {
+  'on-hold': 'Estamos buscando un repartidor para tu pedido...',
+  'taken': 'El restaurante esta tomando tu pedido...',
+  'paid': 'Tu pedido ha sido pagado...',
+  'canceled': 'Tu pedido ha sido cancelado...',
+}
+
 const libraries: Library[] = ['core', 'maps']
 
 
@@ -63,89 +70,93 @@ const UserOrderIdPage = () => {
   }, [order]);
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-      <div className="flex gap-8">
-        <div className="flex-1 flex h-full rounded-md" ref={mapRef} />
-        <div className="flex-1 flex flex-col gap-4">
+    <div className="flex flex-1 flex-col gap-4 relative">
+      <div className="flex-1 w-full h-full rounded-md hidden md:block" ref={mapRef} />
+      <div className="flex-1 flex flex-col gap-4 relative w-full md:absolute md:top-10 md:right-10 md:w-1/3">
         <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-medium">
-                Detalles
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-sm font-medium">
-                    Restaurante
-                  </div>
-                  <div className="text-sm text-slate-400">
-                    {orderState?.restaurant}
-                  </div>
+          <CardContent className="flex flex-col gap-4 p-4 px-6">
+            <h3 className="text-2xl font-bold">
+              {statusesDescriptions[orderState?.status as string]}
+            </h3>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-medium">
+              Detalles
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-sm font-medium">
+                  Restaurante
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="text-sm text-slate-400">
+                  {orderState?.restaurant}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-sm font-medium">
+                  Estatus
+                </div>
+                <div className="text-sm text-slate-400 flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-green-400 animate-pulse" />
                   <div className="text-sm font-medium">
-                    Estatus
-                  </div>
-                  <div className="text-sm text-slate-400 flex items-center gap-2">
-                    <div className="w-4 h-4 rounded-full bg-green-400 animate-pulse" />
-                    <div className="text-sm font-medium">
-                      {translatedStatuses[orderState?.status as string]}
-                    </div>
+                    {translatedStatuses[orderState?.status as string]}
                   </div>
                 </div>
               </div>
-              <Separator />
-              <ul className="space-y-4">
-                {
-                  (orderState?.products || []).map((product) => (
-                    <li key={product.id} className="flex gap-4 p-4 border-[1px] border-slate-200 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div>
-                          <Label>x {product.quantity}</Label>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                          <p className="text-sm font-medium">{product.name}</p>
-                          <p className="text-xs text-slate-400">
-                            ${product.price.toFixed(2)}
-                          </p>
-                        </div>
+            </div>
+            <Separator />
+            <ul className="space-y-4">
+              {
+                (orderState?.products || []).map((product) => (
+                  <li key={product.id} className="flex gap-4 p-4 border-[1px] border-slate-200 rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <Label>x {product.quantity}</Label>
                       </div>
-                    </li>
-                  ))
-                }
-              </ul>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-medium">
-                Pedido
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-sm font-medium">
-                    Fecha
-                  </div>
-                  <div className="text-sm text-slate-400">
-                    {orderState?.createdAt ? new Date(orderState.createdAt).toLocaleDateString() : ''}
-                  </div>
+                      <div className="flex flex-col gap-1">
+                        <p className="text-sm font-medium">{product.name}</p>
+                        <p className="text-xs text-slate-400">
+                          ${product.price.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                ))
+              }
+            </ul>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-medium">
+              Pedido
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-sm font-medium">
+                  Fecha
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="text-sm font-medium">
-                    Recibo
-                  </div>
-                  <Button variant="outline" onClick={() => window.open(orderState?.receiptUrl as string, '_blank')}>
-                    Descargar
-                  </Button>
+                <div className="text-sm text-slate-400">
+                  {orderState?.createdAt ? new Date(orderState.createdAt).toLocaleDateString() : ''}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-sm font-medium">
+                  Recibo
+                </div>
+                <Button variant="outline" onClick={() => window.open(orderState?.receiptUrl as string, '_blank')}>
+                  Descargar
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
