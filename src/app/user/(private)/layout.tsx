@@ -1,3 +1,5 @@
+'use client';
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { NavActions } from "@/components/nav-actions"
 import { Separator } from "@/components/ui/separator"
@@ -7,13 +9,23 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { AddressProvider } from "./_providers/AddressProvider"
+import { useUser } from "@/hooks/useUser"
+import { Socket } from "socket.io-client"
+import { useEffect, useRef } from "react"
+import ky from "ky"
+import { getSocketForRole } from "@/lib/socket"
+import { User } from "@/lib/types/Zod/User"
+import { useSocket } from "./_hooks/useSocket";
 
 type Props = {
   children: React.ReactNode
 }
 
 export default function UserPrivateLayout(props: Props) {
-  const { children } = props
+  const { children } = props;
+
+  const socket = useSocket();
+
   return (
     <AddressProvider>
       <SidebarProvider>

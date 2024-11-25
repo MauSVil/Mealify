@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { EyeIcon } from "lucide-react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
+import { useSocket } from "../../_hooks/useSocket";
 
 const translatedStatuses: Record<string, string> = {
   'on-hold': 'En espera',
@@ -27,7 +28,6 @@ const statusesDescriptions: Record<string, string> = {
 }
 
 const libraries: Library[] = ['core', 'maps']
-
 
 const UserOrderIdPage = () => {
   const params = useParams();
@@ -68,6 +68,13 @@ const UserOrderIdPage = () => {
       setOrderState(order);
     }
   }, [order]);
+
+  const socket = useSocket();
+
+  socket?.on('order-update', async (order) => {
+    console.log(order, 'order');
+    // setOrderState(order);
+  });
 
   return (
     <div className="flex flex-1 flex-col gap-4 relative">
