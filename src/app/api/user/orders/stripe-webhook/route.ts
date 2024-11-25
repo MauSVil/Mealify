@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       const order = await OrderRepository.findOne({ checkoutSessionId: sessionId });
       if (!order) throw new Error('No se encontró la orden');
       await OrderRepository.updateOne(order._id!, {
-        status: 'paid',
+        status: 'on-hold',
         paymentIntentId: paymentIntentId?.toString(),
         checkoutSessionId: sessionId,
         shippingAmount: Number(shippingAmount),
