@@ -12,6 +12,7 @@ import { EyeIcon } from "lucide-react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Library } from "@googlemaps/js-api-loader";
 import { useSocket } from "../../_hooks/useSocket";
+import { NewOrder } from "@/components/Modals/AcceptOrder";
 
 const translatedStatuses: Record<string, string> = {
   'on-hold': 'En espera',
@@ -74,7 +75,7 @@ const UserOrderIdPage = () => {
   useEffect(() => {
     if (socket) {
       const handleOrderUpdate = async (order: any) => {
-        console.log(order, "order");
+        setOrderState(order);
       };
 
       socket.on("order-update", handleOrderUpdate);
@@ -109,7 +110,7 @@ const UserOrderIdPage = () => {
                   Restaurante
                 </div>
                 <div className="text-sm text-slate-400">
-                  {orderState?.restaurant}
+                  Restaurante
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
