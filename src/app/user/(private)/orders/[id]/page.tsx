@@ -71,10 +71,19 @@ const UserOrderIdPage = () => {
 
   const socket = useSocket();
 
-  socket?.on('order-update', async (order) => {
-    console.log(order, 'order');
-    // setOrderState(order);
-  });
+  useEffect(() => {
+    if (socket) {
+      const handleOrderUpdate = async (order: any) => {
+        console.log(order, "order");
+      };
+
+      socket.on("order-update", handleOrderUpdate);
+
+      return () => {
+        socket.off("order-update", handleOrderUpdate);
+      };
+    }
+  }, [socket]);
 
   return (
     <div className="flex flex-1 flex-col gap-4 relative">
