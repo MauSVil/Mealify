@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         shippingAmount: Number(shippingAmount),
         receiptUrl,
       });
-      // await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/new-order`, { order: order._id });
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/new-order`, { order: order._id });
     }
 
     if (event.type === 'charge.updated') {
