@@ -38,6 +38,7 @@ export const POST = async (req: NextRequest) => {
       vehicleRegistration: null,
       motorType: null,
       active: false,
+      onHold: false,
     });
 
     const insertedUser = await UsersRepository.findOne({ id: insertedId });

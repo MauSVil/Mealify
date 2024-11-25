@@ -33,6 +33,7 @@ export const POST = async (req: NextRequest) => {
       vehicleRegistration: null,
       motorType: null,
       active: false,
+      onHold: false,
     });
     return NextResponse.json({ message: 'Usuario registrado correctamente' });
   } catch (e) {

@@ -20,6 +20,7 @@ export const UserSchema = z.object({
   stripeConfigFinished: z.boolean().default(false),
   customerId: z.string().optional(),
   active: z.boolean().default(false),
+  onHold: z.boolean().default(false),
 });
 
 export type User = z.infer<typeof UserSchema>;

@@ -10,7 +10,7 @@ export const OrderSchema = z.object({
     price: z.number(),
     quantity: z.number(),
   })),
-  status: z.enum(['on-hold', 'pending', 'paid', 'canceled']).default('pending'),
+  status: z.enum(['on-hold', 'taken', 'paid', 'canceled']).default('taken'),
   checkoutSessionId: z.string().default(''),
   paymentIntentId: z.string().default(''),
   shippingAmount: z.number().default(0),
@@ -32,7 +32,7 @@ export const OrderRepositoryFilterModel = z.object({
   paymentIntentId: z.string().optional(),
   user: z.string().optional(),
   restaurant: z.string().optional(),
-  status: z.enum(['on-hold', 'pending', 'paid', 'canceled']).optional(),
+  status: z.enum(['on-hold', 'taken', 'paid', 'canceled']).optional(),
 });
 
 export type OrderRepositoryFilter = z.infer<typeof OrderRepositoryFilterModel>;

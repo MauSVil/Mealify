@@ -6,38 +6,44 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { AlertDialogTitle } from '@radix-ui/react-alert-dialog';
-import { Library } from '@googlemaps/js-api-loader';
+import { Order } from '@/lib/types/Zod/Order';
 
-export interface AddAddressProps extends InstanceProps<any, any> {}
+export interface NewOrder extends Omit<Order, 'restaurant'> {
+  restaurant: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  }
+}
 
-const libraries: Library[] = ['core', 'maps', 'places', 'marker']
+export interface AddAddressProps extends InstanceProps<any, any> {
+  order: NewOrder
+}
+
 
 function AcceptOrder(props: AddAddressProps) {
-  const { isOpen, onReject, onResolve } = props;
-
-  const onSubmit = async () => {
-    await onResolve({ name: 'Test' });
-  }
+  const { isOpen, onReject, onResolve, order } = props;
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{'Agregar nueva ubicación'}</AlertDialogTitle>
+          <AlertDialogTitle>{'Hay una nueva orden disponible'}</AlertDialogTitle>
         </AlertDialogHeader>
-        <div className='flex-1 flex flex-col gap-4'>
-          Esta es una orden nueva
-        </div>
+        <AlertDialogDescription>
+          {order.restaurant.name}
+        </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onReject}>
-            {'Cancelar'}
+            {'Descartar'}
           </AlertDialogCancel>
-          <AlertDialogAction onClick={onSubmit}>
-            {'Crear'}
+          <AlertDialogAction onClick={onResolve}>
+            {'Tomar la orden'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

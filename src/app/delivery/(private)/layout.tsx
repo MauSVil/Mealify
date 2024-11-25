@@ -27,8 +27,12 @@ const DeliveryPrivateLayout = ({ children }: { children: React.ReactNode }) => {
       socketRef.current = socket;
 
       socket.on('new-order', async (order) => {
-        console.log(order, 'order');
-        await AcceptOrderDialog();
+        try {
+          await AcceptOrderDialog({ order });
+          socket.emit('order-took', { order, userId: user._id! });
+        } catch (e) {
+          console.error(e);
+        }
       });
     }
 
